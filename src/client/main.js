@@ -54,7 +54,7 @@ window.onload = ()=>{
 
         const convertValue= ({sourceValue=0, sourceCurrency='USD', targetCurrency='GBP'}={})=>{
             const USD = rates[sourceCurrency] * sourceValue // convert to base currency (USD)
-            return USD/rates[targetCurrency]   // return value 
+            return USD*rates[targetCurrency]   // return value 
         }
 
         return {
