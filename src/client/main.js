@@ -10,22 +10,18 @@ window.onload = ()=>{
     const networkHelper = function NetworkHelper(){
         const handleResponse = (response)=>{
 
+            console.log(`handelling response: ${response}`)
+
             if(response.ok){
-                return new Promise((resolve, reject)=>{
-                    resolve(response.json())
-                })
+                return response.json()
             }else{
                 Promise.reject( new Error ('Unexpected Response'))
             }
-            /*
-            return response.ok
-                ? response.json()
-                :Promise.reject(new Error ('Unexpected response'))
-            */
         };
 
         const logMessage = (message)=>{
             console.log(message)
+            return message
         }
 
         const getRates = ()=>{  // returns a promise that resolves to the data
@@ -66,8 +62,20 @@ window.onload = ()=>{
 
     // ==== main code === 
 
+    // install the serivice worker -
+    if(navigator.serviceWorker){    // check that service workers are supported in the browser
+        navigator.serviceWorker.register('/sw.js').then((reg)=>{ // TODO: Do I need to add a scope to this?
+            console.log('service worker registered')
+        }).catch((err)=>{
+            console.log(`not registered: ${err.message}`)
+        })
+    }
+
     // get the rates && process them
+    let someRates = networkHelper.getRates();
+
     networkHelper.getRates().then((rates)=>{
+        console.log(typeof rates)
         conversionHelper.useRates(rates)
     })
 
