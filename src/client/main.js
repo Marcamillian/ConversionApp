@@ -1,4 +1,3 @@
-
 window.onload = ()=>{
 
     // get references to all the static html elements
@@ -7,10 +6,27 @@ window.onload = ()=>{
 
 
     // helper modules
+
+    const displayHelper = function DisplayHelper(){
+        
+        if (!document) throw new Error("No document object to work with")   // check to see if there is a document object
+        
+        // get all the relevant elements in the DOM
+        const curr1 = document.getElementById('curr-1')
+        const curr2 = document.getElementById('curr-2')
+        const updateDialog = document.getElementById('update-display')
+
+        const showUpdate = ()=>{
+            updateDialog.classList.remove('hidden')
+        }
+
+        return {
+            showUpdate
+        }
+    }()
+
     const networkHelper = function NetworkHelper(){
         const handleResponse = (response)=>{
-
-            console.log(`handelling response: ${response}`)
 
             if(response.ok){
                 return response.json()
@@ -60,22 +76,57 @@ window.onload = ()=>{
 
     }()
 
-    // ==== main code === 
+    const serviceWorkerHelper = function ServiceWorkerHelper(workerLocation){
+        if (!navigator.serviceWorker) throw new Error("service worker not supported")
 
-    // install the serivice worker -
-    if(navigator.serviceWorker){    // check that service workers are supported in the browser
-        navigator.serviceWorker.register('/sw.js').then((reg)=>{ // TODO: Do I need to add a scope to this?
-            console.log('service worker registered')
+        console.log(`can I see displayHelper here ${displayHelper}`)
+
+        navigator.serviceWorker.register(workerLocation).then((reg)=>{
+            console.log("Registered a service worker")
+            
+            // check if service worker loaded the page - if it didn't return (as service worker is the latest)
+            if (!navigator.serviceWorker.controller) return
+            
+            // if there is one waiting - there was a service worker installed on the last refresh and its waiting
+            if(reg.waiting){
+                console.log("Service worker waiting")
+                displayHelper.showUpdate()
+                return;
+            }
+
+            // if there is a service worker installing
+            if(reg.installing){
+                trackInstalling(reg.installing)
+                return;
+            }
+
+            // listen for future workers installing
+            reg.addEventListener('updatefound', ()=>{
+                trackInstalling(reg.installing)
+            })
+
+
         }).catch((err)=>{
-            console.log(`not registered: ${err.message}`)
+            throw new Error(`Service worker didn't register: ${err.message}`)
         })
-    }
 
-    // get the rates && process them
-    let someRates = networkHelper.getRates();
+        const trackInstalling = (worker)=>{
+            console.log(`watching ${worker} for things installing`)
 
+            worker.addEventListener('statechange', ()=>{
+                if(worker.state == 'installed'){
+                    console.log("worker finished installing")
+                    displayHelper.showUpdate()
+                }
+            })
+        }
+
+    }('/sw.js')
+
+    
+
+    // grab the rates
     networkHelper.getRates().then((rates)=>{
-        console.log(typeof rates)
         conversionHelper.useRates(rates)
     })
 
