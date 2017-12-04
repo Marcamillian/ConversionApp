@@ -15,13 +15,37 @@ window.onload = ()=>{
         const curr1 = document.getElementById('curr-1')
         const curr2 = document.getElementById('curr-2')
         const updateDialog = document.getElementById('update-display')
+        const updateInstallButton = document.getElementById('update-accept')
+        const updateDismissButton = document.getElementById('update-dismiss')
+        
+        // if update dismissed - hide the message
+        updateDismissButton.addEventListener('click',()=>{
+            hideUpdate()
+        })
 
+        // called to show the update messagebox for the service worker
         const showUpdate = ()=>{
             updateDialog.classList.remove('hidden')
         }
 
+        // called to hide the message box for updating the service worker
+        const hideUpdate = ()=>{
+            updateDialog.classList.add('hidden')
+        }
+
+        // when the update install button pressed - send a message to the new service worker to take over
+        const updateListener = (worker)=>{
+            updateInstallButton.addEventListener('click', ()=>{
+                worker.postMessage({action: 'skipWaiting'})
+            })
+        }
+
+        // TODO : function to display the currency conversions 
+
         return {
-            showUpdate
+            showUpdate,
+            hideUpdate,
+            updateListener
         }
     }()
 
@@ -79,17 +103,14 @@ window.onload = ()=>{
     const serviceWorkerHelper = function ServiceWorkerHelper(workerLocation){
         if (!navigator.serviceWorker) throw new Error("service worker not supported")
 
-        console.log(`can I see displayHelper here ${displayHelper}`)
-
+        // register the service worker
         navigator.serviceWorker.register(workerLocation).then((reg)=>{
-            console.log("Registered a service worker")
             
             // check if service worker loaded the page - if it didn't return (as service worker is the latest)
             if (!navigator.serviceWorker.controller) return
             
             // if there is one waiting - there was a service worker installed on the last refresh and its waiting
             if(reg.waiting){
-                console.log("Service worker waiting")
                 displayHelper.showUpdate()
                 return;
             }
@@ -110,15 +131,25 @@ window.onload = ()=>{
             throw new Error(`Service worker didn't register: ${err.message}`)
         })
 
+        // listen for change over of service worker - reload page if a new one took over
+        navigator.serviceWorker.addEventListener('controllerchange', ()=>{
+            window.location.reload()
+        })
+
+
+
         const trackInstalling = (worker)=>{
-            console.log(`watching ${worker} for things installing`)
 
             worker.addEventListener('statechange', ()=>{
                 if(worker.state == 'installed'){
-                    console.log("worker finished installing")
+                    displayHelper.updateListener(worker)
                     displayHelper.showUpdate()
                 }
             })
+        }
+
+        const installWaitingWorker = ()=>{
+
         }
 
     }('/sw.js')

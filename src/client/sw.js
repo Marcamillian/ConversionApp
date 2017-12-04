@@ -1,6 +1,4 @@
-//some sssdddddddd333dddddd
-
-console.log("Running SW code")
+//some sssdddddddd333ddddddddddddddddddddffddddss
 
 const staticCacheName = "convapp-static-v1"
 const fakeRates = JSON.stringify({'USD': 1, 'EUR': 1, 'GBP':1, 'INR':1})
@@ -11,6 +9,7 @@ self.addEventListener('install',(event)=>{  // do things when the service worker
             return cache.addAll([
                 '/',
                 'main.js',
+                'styles.css',
                 '/rates'
             ])
         })
@@ -47,6 +46,14 @@ self.addEventListener('fetch', (event)=>{   // listening for calls to fetch
         }
     }*/
 
+})
+
+self.addEventListener('message', (event)=>{
+
+    // if a message has been sent to have the installed service worker stop waiting
+    if(event.data.action == 'skipWaiting'){
+        self.skipWaiting()  // tell the service worker to install itself
+    }
 })
 
 const promiseWrap = (data)=>{    // return promise that resolves to the rates
