@@ -139,4 +139,11 @@ window.onload = ()=>{
         curr1.value = conversionHelper.convertValue({sourceValue: curr2.value}).toFixed(2)
     })
 
+    // for dev purposes - expose the modules for inspection
+    window.convAppObjs = {
+        displayHelper,
+        networkHelper,
+        conversionHelper,
+        serviceWorkerHelper
+    }
 }
