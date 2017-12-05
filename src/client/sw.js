@@ -1,6 +1,4 @@
-//some sssdddddddd333ddddddddddddddddddddffddddss
-
-const staticCacheName = "convapp-static-v1"
+const staticCacheName = "convapp-static-v2"
 const fakeRates = JSON.stringify({'USD': 1, 'EUR': 1, 'GBP':1, 'INR':1})
 
 self.addEventListener('install',(event)=>{  // do things when the service worker installs
@@ -16,15 +14,23 @@ self.addEventListener('install',(event)=>{  // do things when the service worker
     )
 })
 
-/* do things when the service worker activates{
-    self.addEventListener('activate', (event)=>{   
-        // remove the old cached pages
 
-        event.waitUntil(
+self.addEventListener('activate', (event)=>{   // when active - delete the outdated caches
+    // delte the caches that arn't the current one
+    event.waitUntil(
+        caches.keys().then((cacheNames)=>{
+            return Promise.all(
+                cacheNames.filter((cacheName)=>{
+                    return cacheName.startsWith('convapp') &&
+                            cacheName != staticCacheName
+                }).map((cacheName)=>{
+                    return caches.delete(cacheName)
+                })
+            )
+        })
+    )
+})
 
-        )
-    })
-}*/
 
 self.addEventListener('fetch', (event)=>{   // listening for calls to fetch
     
@@ -48,7 +54,7 @@ self.addEventListener('fetch', (event)=>{   // listening for calls to fetch
 
 })
 
-self.addEventListener('message', (event)=>{
+self.addEventListener('message', (event)=>{ // listening to messages to service worker
 
     // if a message has been sent to have the installed service worker stop waiting
     if(event.data.action == 'skipWaiting'){

@@ -50,7 +50,7 @@ window.onload = ()=>{
     }()
 
     const networkHelper = function NetworkHelper(){
-        const handleResponse = (response)=>{
+        const handleResponse = (response)=>{ // checks if the request for the rates was successful
 
             if(response.ok){
                 return response.json()
@@ -131,13 +131,13 @@ window.onload = ()=>{
             throw new Error(`Service worker didn't register: ${err.message}`)
         })
 
-        // listen for change over of service worker - reload page if a new one took over
+        // listen for changeover of service worker - reload page if a new one took over
         navigator.serviceWorker.addEventListener('controllerchange', ()=>{
             window.location.reload()
         })
 
 
-
+        // listen to installing service worker && show user when its waiting
         const trackInstalling = (worker)=>{
 
             worker.addEventListener('statechange', ()=>{
@@ -148,14 +148,9 @@ window.onload = ()=>{
             })
         }
 
-        const installWaitingWorker = ()=>{
-
-        }
-
     }('/sw.js')
 
     
-
     // grab the rates
     networkHelper.getRates().then((rates)=>{
         conversionHelper.useRates(rates)
