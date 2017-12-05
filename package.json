@@ -12,5 +12,8 @@
   "dependencies": {
     "express": "^4.16.2",
     "http": "0.0.0"
+  },
+  "devDependencies": {
+    "babel": "^6.23.0"
   }
 }

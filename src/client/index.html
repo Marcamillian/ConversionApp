@@ -2,10 +2,24 @@
 
 <html>
     <head>
+        <link rel="stylesheet" type="text/css" href="styles.css"/>
         <script src="main.js"></script>
     </head>
 
     <body>
-        <h1>Something is being served</h1> 
+        <h1>Currency Conversion</h1>
+
+        <label> USD </label>
+        <input id ="curr-1" type="number" name="USD"></input>
+        <label> GBP </label>
+        <input id="curr-2" type="number" name="GBP"></input>
+       
+
+        <div id="update-display" class="hidden">
+            <h2> There is an update to the webApp ready to install </h2>
+            <button id="update-accept"> Update now </button>
+            <button id="update-dismiss"> Leave till later </button>
+        </div>
+
     </body>
 </html>
