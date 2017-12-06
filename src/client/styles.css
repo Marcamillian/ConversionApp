@@ -33,8 +33,20 @@ h1,h2{
     margin:0px;
 }
 
+
 .currency-label{
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+    align-items:center;
+}
+.currency-label h2{
     font-size: 1em;
+}
+.currency-label img{
+    height:3h;
+    width:3vh;
+    margin-left:2vh;
 }
 
 .currency-input{
@@ -47,7 +59,6 @@ h1,h2{
 
     text-align:center;
     font-size: 1em;
-    padding:
 }
 
 #curr-1{
@@ -57,9 +68,9 @@ h1,h2{
 /* general attributes to add to elements */
 
 .shadow{
-    -moz-box-shadow: 3px 3px 10px 6px #969696;
-    -webkit-box-shadow: 3px 3px 10px 6px #969696;
-    box-shadow: 3px 3px 10px 6px #969696;
+    -moz-box-shadow: 3px 3px 15px 6px #00000075;
+    -webkit-box-shadow: 3px 3px 15px 6px #00000075;
+    box-shadow: 3px 3px 15px 6px #00000075;
 }
 
 .hidden{
