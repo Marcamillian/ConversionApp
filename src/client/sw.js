@@ -1,4 +1,4 @@
-const staticCacheName = "convapp-static-v5"
+const staticCacheName = "convapp-static-v3"
 const fakeRates = JSON.stringify({'USD': 1, 'EUR': 1, 'GBP':1, 'INR':1})
 
 self.addEventListener('install',(event)=>{  // do things when the service worker installs
@@ -8,14 +8,15 @@ self.addEventListener('install',(event)=>{  // do things when the service worker
                 '/',
                 'main.js',
                 'styles.css',
-                '/rates'
+                '/rates',
+                'https://fonts.googleapis.com/css?family=Nunito:300|Nunito+Sans:200'
             ])
         })
     )
 })
 
 
-self.addEventListener('activate', (event)=>{   // when active - delete the outdated caches
+self.addEventListener('activate', (event)=>{   // when active -delete the outdated caches
     // delte the caches that arn't the current one
     event.waitUntil(
         caches.keys().then((cacheNames)=>{

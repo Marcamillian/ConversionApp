@@ -4,23 +4,24 @@
     <head>
         <link rel="stylesheet" type="text/css" href="styles.css"/>
         <script src="main.js"></script>
-        <link href="https://fonts.googleapis.com/css?family=Nunito|Nunito+Sans" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Nunito:300|Nunito+Sans:200" rel="stylesheet">
     </head>
 
-    <body>
-        <h1>Currency Conversion</h1>
+    <body class="shadow">
 
-        <label> USD </label>
-        <input id ="curr-1" class="number-display" type="number" name="USD"></input>
-        <label> GBP </label>
-        <input id="curr-2" class="number-display" type="number" name="GBP"></input>
-       
+        <h2 class="currency-label">USD</h2>
+        <input id ="curr-1" class="currency-input number-display" type="number" name="USD"></input>
+        
+        <input id="curr-2" class="currency-input number-display" type="number" name="GBP"></input>
+        <h2 class="currency-label">GBP</h2>
 
+        <!-- update notification -->
         <div id="update-display" class="hidden">
             <h2> There is an update to the webApp ready to install </h2>
             <button id="update-accept"> Update now </button>
             <button id="update-dismiss"> Leave till later </button>
         </div>
-
     </body>
+
+    
 </html>
