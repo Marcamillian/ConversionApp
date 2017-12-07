@@ -1,7 +1,7 @@
 html{
     font-family: 'Nunito', sans-serif;
     background-color: #BFBFBF;
-    font-size:10vh;
+    font-size:3vh;
 }
 
 html,body{
@@ -23,16 +23,17 @@ body{
     align-items: center;
 }
 
-/* styling for specific elements */
-
-.number-display{
-    font-family: 'Nunito Sans', sans-serif;
-}
 
 h1,h2{
     margin:0px;
 }
 
+
+/* styling for specific elements */
+
+.number-display{
+    font-family: 'Nunito Sans', sans-serif;
+}
 
 .currency-label{
     display:flex;
@@ -41,7 +42,7 @@ h1,h2{
     align-items:center;
 }
 .currency-label h2{
-    font-size: 1em;
+    font-size: 3em;
 }
 .currency-label img{
     height:3h;
@@ -58,11 +59,41 @@ h1,h2{
     border:none;
 
     text-align:center;
-    font-size: 1em;
+    font-size: 3em;
 }
 
 #curr-1{
     margin-bottom: 5vh;
+}
+
+#update-display{
+    top:-4.5em;
+    width:50vw;
+    padding:0.5em;
+
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#update-display.active{
+    top:0em;
+}
+
+#update-display p{
+    font-size: 1em;
+    text-align:center;
+    margin:0px;
+}
+
+#update-display .option-buttons{
+    display:flex;
+    flex-direction: row;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:0.25em 1em 0.25em 1em;
 }
 
 /* general attributes to add to elements */
@@ -73,7 +104,27 @@ h1,h2{
     box-shadow: 3px 3px 15px 6px #00000075;
 }
 
-.hidden{
-    display:none;
+.dialog-popup{
+    position:absolute;
+    
+    background-color: #000000D8;
+    color:white;
+
+    -webkit-transition: top 1s;
+    transition: top 1s;
 }
 
+button{
+    border: none;
+    background-color: #FFFFFF00;
+    color:inherit;
+    padding:0.5em 1em 0.5em 1em
+}
+
+button:hover{
+    border: 1px solid white;
+}
+
+button.highlight{
+    background-color: #FF4AED;
+}

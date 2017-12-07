@@ -1,4 +1,4 @@
-const staticCacheName = "convapp-static-v3"
+const staticCacheName = "convapp-static-v9"
 const fakeRates = JSON.stringify({'USD': 1, 'EUR': 1, 'GBP':1, 'INR':1})
 
 self.addEventListener('install',(event)=>{  // do things when the service worker installs
