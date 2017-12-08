@@ -104,7 +104,7 @@ h1,h2{
 
 
 
-#curr-select-top{
+.curr-select{
     width: 100%;
     height: 50vh;
     
@@ -114,24 +114,34 @@ h1,h2{
     align-items: center;
 
     position:absolute;
-    top:-52vh;
 }
-#curr-select-top.active{
-    top:0vh;
-}
-#curr-select-top button{
+.curr-select button{
     margin:0.25em;
     font-size:2em;
 }
-#curr-select-top button .checkmark{
+.curr-select button .checkmark{
     height:1em;
     width:1em;
     position:relative;
     top:0.1em;
     display:none;
 }
-#curr-select-top button.selected .checkmark{
+.curr-select button.selected .checkmark{
     display:inline-block;
+}
+
+.curr-select.top{
+    top:-52vh
+}
+.curr-select.top.active{
+    top:0vh;
+}
+
+.curr-select.bottom{
+    top:100vh
+}
+.curr-select.bottom.active{
+    top:50vh;
 }
 
 
