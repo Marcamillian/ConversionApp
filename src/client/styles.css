@@ -12,8 +12,6 @@ html,body{
 
 body{
     background-color: white;
-    width:100%;
-    max-width: 1000px;
     margin-left:auto;
     margin-right:auto;
 
@@ -66,6 +64,9 @@ h1,h2{
     margin-bottom: 5vh;
 }
 
+
+
+
 #update-display{
     top:-20vh;
     width:50vw;
@@ -100,6 +101,9 @@ h1,h2{
     padding:0.5em 1em 0.5em 1em
 }
 
+
+
+
 #curr-select-top{
     width: 100%;
     height: 50vh;
@@ -111,7 +115,6 @@ h1,h2{
 
     position:absolute;
     top:-52vh;
-
 }
 #curr-select-top.active{
     top:0vh;
@@ -125,9 +128,20 @@ h1,h2{
     width:1em;
     position:relative;
     top:0.1em;
+    display:none;
+}
+#curr-select-top button.selected .checkmark{
+    display:inline-block;
 }
 
+
+
 /* general attributes to add to elements */
+
+.body-width{
+    width:100%;
+    max-width: 1000px;
+}
 
 .shadow{
     -moz-box-shadow: 3px 3px 15px 6px #00000075;
@@ -159,3 +173,4 @@ button:hover{
 button.highlight{
     background-color: #FF4AED;
 }
+

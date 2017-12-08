@@ -10,6 +10,7 @@ self.addEventListener('install',(event)=>{  // do things when the service worker
                 'styles.css',
                 '/rates',
                 '/assets/dropdown.svg',
+                '/assets/checkmark.svg',
                 'https://fonts.googleapis.com/css?family=Nunito:300|Nunito+Sans:200'
             ])
         })
