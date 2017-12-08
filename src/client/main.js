@@ -1,23 +1,31 @@
 window.onload = ()=>{
 
-    // get references to all the static html elements
-    const curr1 = document.getElementById('curr-1')
-    const curr2 = document.getElementById('curr-2') 
-
-
     // helper modules
 
     const displayHelper = function DisplayHelper(){
         
         if (!document) throw new Error("No document object to work with")   // check to see if there is a document object
         
-        // get all the relevant elements in the DOM
+        // === GET ALL THE RELEVANT ELEMENTS IN THE DOM
+
+        // currency conversion boxes
         const curr1 = document.getElementById('curr-1')
         const curr2 = document.getElementById('curr-2')
+
+        // update dialog boxes
         const updateDialog = document.getElementById('update-display')
         const updateInstallButton = document.getElementById('update-accept')
         const updateDismissButton = document.getElementById('update-dismiss')
         
+        // currency select boxes
+
+
+        // === SET THE CLICK EVENTS
+
+
+
+        // == update relevant events
+
         // if update dismissed - hide the message
         updateDismissButton.addEventListener('click',()=>{
             hideUpdate()
@@ -40,7 +48,16 @@ window.onload = ()=>{
             })
         }
 
-        // TODO : function to display the currency conversions 
+        // event listeners -- when the input is modified 
+        curr1.addEventListener('keyup',()=>{        
+            curr2.value = conversionHelper.convertValue({sourceValue: curr1.value}).toFixed(2)
+        })
+
+        curr2.addEventListener('keyup',()=>{
+            curr1.value = conversionHelper.convertValue({sourceValue: curr2.value}).toFixed(2)
+        })
+
+        // === TODO: currency relevant events 
 
         return {
             showUpdate,
@@ -79,6 +96,8 @@ window.onload = ()=>{
 
     const conversionHelper = function ConversionHelper(){
 
+        // TODO: model for what currencies are being used
+
         let rates = {
             USD: 1,
             GBP: 0.752245
@@ -92,6 +111,8 @@ window.onload = ()=>{
             const USD = rates[sourceCurrency] * sourceValue // convert to base currency (USD)
             return USD*rates[targetCurrency]   // return value 
         }
+
+        // TODO: functions to update what currency is being used
 
         return {
             useRates,
@@ -154,15 +175,6 @@ window.onload = ()=>{
     // grab the rates
     networkHelper.getRates().then((rates)=>{
         conversionHelper.useRates(rates)
-    })
-
-    // event listeners -- when the input is modified 
-    curr1.addEventListener('keyup',()=>{        
-        curr2.value = conversionHelper.convertValue({sourceValue: curr1.value}).toFixed(2)
-    })
-
-    curr2.addEventListener('keyup',()=>{
-        curr1.value = conversionHelper.convertValue({sourceValue: curr2.value}).toFixed(2)
     })
 
     // for dev purposes - expose the modules for inspection
