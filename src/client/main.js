@@ -25,12 +25,12 @@ window.onload = ()=>{
 
         // called to show the update messagebox for the service worker
         const showUpdate = ()=>{
-            updateDialog.classList.remove('hidden')
+            updateDialog.classList.add('active')
         }
 
         // called to hide the message box for updating the service worker
         const hideUpdate = ()=>{
-            updateDialog.classList.add('hidden')
+            updateDialog.classList.remove('active')
         }
 
         // when the update install button pressed - send a message to the new service worker to take over

@@ -4,22 +4,66 @@
     <head>
         <link rel="stylesheet" type="text/css" href="styles.css"/>
         <script src="main.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Nunito:300|Nunito+Sans:200" rel="stylesheet">
     </head>
 
-    <body>
-        <h1>Currency Conversion</h1>
+    <body class="shadow body-width">
 
-        <label> USD </label>
-        <input id ="curr-1" type="number" name="USD"></input>
-        <label> GBP </label>
-        <input id="curr-2" type="number" name="GBP"></input>
-       
+        <div class="currency-label">
+            <h2>USD</h2>
+            <img src="assets/dropdown.svg" class="shadow"/>
+        </div>
+        <input id ="curr-1" class="currency-input number-display" type="number" name="USD"></input>
+        
+        <input id="curr-2" class="currency-input number-display" type="number" name="GBP"></input>
+        <div class="currency-label">
+            <h2>GBP</h2>
+            <img src="assets/dropdown.svg" class="shadow"/>
+        </div>
 
-        <div id="update-display" class="hidden">
-            <h2> There is an update to the webApp ready to install </h2>
-            <button id="update-accept"> Update now </button>
-            <button id="update-dismiss"> Leave till later </button>
+        <!-- update notification -->
+        <div id="update-display" class="dialog-popup shadow">
+            <p> New update available </p>
+            <div class="option-buttons">
+                <button id="update-accept" class="highlight"> Update now </button>
+                <button id="update-dismiss"> Leave till later </button>
+            </div>
+        </div>
+
+        <!-- currency change dialog -->
+        <div class="curr-select top dialog-popup body-width">
+            <button class="selected"> <img src="assets/checkmark.svg" class="checkmark"/> 
+                USD
+            </button>
+            
+            <button> <img src="assets/checkmark.svg" class="checkmark"/> 
+                GBP
+            </button>
+            <button> <img src="assets/checkmark.svg" class="checkmark"/> 
+                EUR 
+            </button>
+            <button> <img src="assets/checkmark.svg" class="checkmark"/> 
+                IDR 
+            </button>
+        </div>
+
+        <div class="curr-select bottom dialog-popup body-width">
+            <button class="selected"> <img src="assets/checkmark.svg" class="checkmark"/> 
+                USD
+            </button>
+            
+            <button> <img src="assets/checkmark.svg" class="checkmark"/> 
+                GBP
+            </button>
+            <button> <img src="assets/checkmark.svg" class="checkmark"/> 
+                EUR 
+            </button>
+            <button> <img src="assets/checkmark.svg" class="checkmark"/> 
+                IDR 
+            </button>
         </div>
 
     </body>
+
+    
 </html>
