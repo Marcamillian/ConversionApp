@@ -1,7 +1,11 @@
 window.onload = ()=>{
 
-    // helper modules
+    // models for the conversion 
+    let coreUSDValue = 0;
+    let curr1 = 'USD';
+    let curr2 = 'GBP';
 
+    // helper modules
     const displayHelper = function DisplayHelper(){
         
         if (!document) throw new Error("No document object to work with")   // check to see if there is a document object
@@ -9,55 +13,107 @@ window.onload = ()=>{
         // === GET ALL THE RELEVANT ELEMENTS IN THE DOM
 
         // currency conversion boxes
-        const curr1 = document.getElementById('curr-1')
-        const curr2 = document.getElementById('curr-2')
+        const curr1Input = document.getElementById('curr-1')
+        const curr2Input = document.getElementById('curr-2')
+        // currency conversion 
 
         // update dialog boxes
         const updateDialog = document.getElementById('update-display')
         const updateInstallButton = document.getElementById('update-accept')
         const updateDismissButton = document.getElementById('update-dismiss')
         
-        // currency select boxes
-
+        // currency select reveal
+        const topCurrRevealButton = document.querySelector('.currency-label.top .dropdown')
+        const bottomCurrRevealButton = document.querySelector('.currency-label.bottom .dropdown')
+        // currency select popups
+        const currPopupTop = document.querySelector('.curr-select.top')
+        const currPopupBottom = document.querySelector('.curr-select.bottom')
+        // currency buttons
+        const currSelectButtonsTop = document.querySelectorAll('.curr-select.top button')
+        const currSelectButtonsBottom = document.querySelectorAll('.curr-select.bottom button')
 
         // === SET THE CLICK EVENTS
-
-
 
         // == update relevant events
 
         // if update dismissed - hide the message
         updateDismissButton.addEventListener('click',()=>{
-            hideUpdate()
+            return hideUpdate()
         })
 
         // called to show the update messagebox for the service worker
         const showUpdate = ()=>{
-            updateDialog.classList.add('active')
+            return updateDialog.classList.add('active')
         }
 
         // called to hide the message box for updating the service worker
         const hideUpdate = ()=>{
-            updateDialog.classList.remove('active')
+            return updateDialog.classList.remove('active')
         }
 
         // when the update install button pressed - send a message to the new service worker to take over
         const updateListener = (worker)=>{
-            updateInstallButton.addEventListener('click', ()=>{
+            return updateInstallButton.addEventListener('click', ()=>{
                 worker.postMessage({action: 'skipWaiting'})
             })
         }
 
+        // == currency relevant events
+
         // event listeners -- when the input is modified 
-        curr1.addEventListener('keyup',()=>{        
-            curr2.value = conversionHelper.convertValue({sourceValue: curr1.value}).toFixed(2)
+        curr1Input.addEventListener('keyup',()=>{        
+            curr2Input.value = conversionHelper.convertValue({sourceValue: curr1Input.value}).toFixed(2)
         })
 
-        curr2.addEventListener('keyup',()=>{
-            curr1.value = conversionHelper.convertValue({sourceValue: curr2.value}).toFixed(2)
+        curr2Input.addEventListener('keyup',()=>{
+            curr1Input.value = conversionHelper.convertValue({sourceValue: curr2Input.value}).toFixed(2)
         })
 
-        // === TODO: currency relevant events 
+        // === TODO: currencySelect relevant events
+        topCurrRevealButton.addEventListener('click', ()=>{
+            console.log("somethign top")
+            revealPopup(currPopupTop);
+        })
+        bottomCurrRevealButton.addEventListener('click', ()=>{
+            console.log("something bottom")
+            revealPopup(currPopupBottom)
+        })
+        currSelectButtonsTop.forEach((button)=>{
+            button.addEventListener('click', (event)=>{
+                showCurrSelect(event.target, currSelectButtonsTop); // display what currency selected
+                //changeCurrency
+                hidePopup(currPopupTop)// hide the currency select
+                return
+            })
+        })
+        currSelectButtonsBottom.forEach((button)=>{
+            button.addEventListener('click',(event)=>{
+                showCurrSelect(event.target, currSelectButtonsBottom);
+                // change currency
+                hidePopup(currPopupBottom)
+            })
+        })
+
+        // add the events to the currencySelectButtons
+        const showCurrSelect = (buttonClicked, currButtons)=>{
+            // remove selected class from all buttons
+            currButtons.forEach((button)=>{
+                button.classList.remove('selected')
+            })
+            // set the currency to the same as the selected button
+            
+            // add the selected class to the selected button
+            buttonClicked.classList.add('selected')
+            
+            return 
+        }
+
+        const revealPopup = (popupElement)=>{
+            return popupElement.classList.add('active')
+        }
+        const hidePopup = (popupElement)=>{
+            return popupElement.classList.remove('active')
+        }
 
         return {
             showUpdate,
@@ -96,15 +152,13 @@ window.onload = ()=>{
 
     const conversionHelper = function ConversionHelper(){
 
-        // TODO: model for what currencies are being used
-
         let rates = {
             USD: 1,
             GBP: 0.752245
         }
 
-        const useRates = (newRates)=>{
-            rates = newRates
+        const setRates = (newRates)=>{
+            return rates = newRates
         }
 
         const convertValue= ({sourceValue=0, sourceCurrency='USD', targetCurrency='GBP'}={})=>{
@@ -115,7 +169,7 @@ window.onload = ()=>{
         // TODO: functions to update what currency is being used
 
         return {
-            useRates,
+            setRates,
             convertValue
         }
 
@@ -172,9 +226,13 @@ window.onload = ()=>{
     }('/sw.js')
 
     
+    // 
+    // IMPLEMENTATION SPECIFIC COMMANDS
+    //
+
     // grab the rates
     networkHelper.getRates().then((rates)=>{
-        conversionHelper.useRates(rates)
+        conversionHelper.setRates(rates)
     })
 
     // for dev purposes - expose the modules for inspection
