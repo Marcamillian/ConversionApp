@@ -18,7 +18,7 @@ app.get('/rates', (request, response)=>{
         USD: 1,
         EUR: 0.841730,
         GBP: 0.752245,
-        INR: 64.4750
+        IDR: 64.4750
     })
 })
 

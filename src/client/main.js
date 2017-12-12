@@ -1,9 +1,5 @@
 window.onload = ()=>{
 
-    // models for the conversion 
-    let coreUSDValue = 0;
-    let curr1 = 'USD';
-    let curr2 = 'GBP';
 
     // === GET ALL THE RELEVANT ELEMENTS IN THE DOM
 
@@ -96,6 +92,9 @@ window.onload = ()=>{
 
     const conversionHelper = function ConversionHelper(){
 
+        let coreUSDValue = 0;
+        let curr = ['USD', 'GBP']
+
         let rates = {
             USD: 1,
             GBP: 0.752245
@@ -106,15 +105,53 @@ window.onload = ()=>{
         }
 
         const convertValue= ({sourceValue=0, sourceCurrency='USD', targetCurrency='GBP'}={})=>{
-            const USD = rates[sourceCurrency] * sourceValue // convert to base currency (USD)
+            const USD = sourceValue / rates[sourceCurrency]   // convert to base currency (USD)
             return USD*rates[targetCurrency]   // return value 
         }
 
         // TODO: functions to update what currency is being used
 
+        const getCurr = (currIndex)=>{
+            return curr[currIndex-1]
+        }
+
+        const setCurr = (currIndex, newCurr)=>{
+            curr[currIndex-1] = newCurr
+        }
+
+        const updateConversions = (convertValue=coreUSDValue, sourceCurrency='USD')=>{
+            
+            // normalise to USD
+            const incomingUSDValue = conversionHelper.convertValue({
+                sourceValue: convertValue,
+                sourceCurrency: sourceCurrency,
+                targetCurrency: 'USD'
+            })
+    
+            coreUSDValue = incomingUSDValue; // store this value for the future
+    
+            // update the value in top box
+            const conversion1 = conversionHelper.convertValue({
+                sourceValue: incomingUSDValue,
+                sourceCurrency:'USD',
+                targetCurrency: curr[0]
+            }).toFixed(2)
+    
+            // update value in bottom box
+            const conversion2 = conversionHelper.convertValue({
+                sourceValue: incomingUSDValue,
+                sourceCurrency: 'USD',
+                targetCurrency: curr[1]
+            }).toFixed(2)
+            return { topValue: conversion1, bottomValue: conversion2}
+        }
+
         return {
             setRates,
-            convertValue
+            convertValue,
+            getCurr,
+            setCurr,
+            updateConversions
         }
 
     }()
@@ -196,28 +233,36 @@ window.onload = ()=>{
 // == currency relevant events
 
     // event listeners -- when the input is modified 
-    curr1Input.addEventListener('keyup',()=>{        
-        curr2Input.value = conversionHelper.convertValue({sourceValue: curr1Input.value}).toFixed(2)
+    curr1Input.addEventListener('keyup',(e)=>{        
+        const convertValues = conversionHelper.updateConversions(event.target.value, conversionHelper.getCurr(1))
+        curr2Input.value = convertValues.bottomValue;
     })
 
-    curr2Input.addEventListener('keyup',()=>{
-        curr1Input.value = conversionHelper.convertValue({sourceValue: curr2Input.value}).toFixed(2)
+    curr2Input.addEventListener('keyup',(e)=>{
+        const convertValues = conversionHelper.updateConversions(event.target.value, conversionHelper.getCurr(2))
+        curr1Input.value = convertValues.topValue;
     })
 
     // === TODO: currencySelect relevant events
     topCurrRevealButton.addEventListener('click', ()=>{
-        console.log("somethign top")
         displayHelper.revealPopup(currPopupTop);
     })
     bottomCurrRevealButton.addEventListener('click', ()=>{
-        console.log("something bottom")
         displayHelper.revealPopup(currPopupBottom)
     })
     currSelectButtonsTop.forEach((button)=>{
         button.addEventListener('click', (event)=>{
-            displayHelper.showCurrSelect(event.target, currSelectButtonsTop); // display what currency selected
-            // currency to change
-            displayHelper.updateCurrencyLabel(currLabelTop, event.target.innerText)
+            let newConvValues;
+
+            displayHelper.showCurrSelect(event.target, currSelectButtonsTop); // display the tick on the currency
+            displayHelper.updateCurrencyLabel(currLabelTop, event.target.innerText) // change the label at the top
+
+            conversionHelper.setCurr(1, event.target.innerText) // set the new currency for top
+            
+            newConvValues = conversionHelper.updateConversions() // get the new values for the conversion (using defaults)
+            curr1Input.value = newConvValues.topValue;
+            curr2Input.value = newConvValues.bottomValue;
+
             //changeCurrency
             displayHelper.hidePopup(currPopupTop)// hide the currency select
             return
@@ -225,9 +270,17 @@ window.onload = ()=>{
     })
     currSelectButtonsBottom.forEach((button)=>{
         button.addEventListener('click',(event)=>{
+            let newConvValues;
+
             displayHelper.showCurrSelect(event.target, currSelectButtonsBottom);
-            // change currency
             displayHelper.updateCurrencyLabel(currLabelBottom, event.target.innerText)
+            // change currency
+            conversionHelper.setCurr(2, event.target.innerText)
+
+            newConvValues = conversionHelper.updateConversions()
+            curr1Input.value = newConvValues.topValue;
+            curr2Input.value = newConvValues.bottomValue;
+
             displayHelper.hidePopup(currPopupBottom)
         })
     })
