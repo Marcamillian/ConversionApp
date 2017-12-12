@@ -1,51 +1,64 @@
 window.onload = ()=>{
 
-    // get references to all the static html elements
-    const curr1 = document.getElementById('curr-1')
-    const curr2 = document.getElementById('curr-2') 
 
+    // === GET ALL THE RELEVANT ELEMENTS IN THE DOM
+
+    // currency conversion boxes
+    const curr1Input = document.getElementById('curr-1')
+    const curr2Input = document.getElementById('curr-2')
+    const currLabelTop = document.querySelector('.currency-label.top h2')
+    const currLabelBottom = document.querySelector('.currency-label.bottom h2')
+
+    // update dialog boxes
+    const updateDialog = document.getElementById('update-display')
+    const updateInstallButton = document.getElementById('update-accept')
+    const updateDismissButton = document.getElementById('update-dismiss')
+    
+    // currency select tirggers
+    const topCurrRevealButton = document.querySelector('.currency-label.top .dropdown')
+    const bottomCurrRevealButton = document.querySelector('.currency-label.bottom .dropdown')
+    // currency select popups
+    const currPopupTop = document.querySelector('.curr-select.top')
+    const currPopupBottom = document.querySelector('.curr-select.bottom')
+    // currency option buttons
+    const currSelectButtonsTop = document.querySelectorAll('.curr-select.top button')
+    const currSelectButtonsBottom = document.querySelectorAll('.curr-select.bottom button')
 
     // helper modules
-
     const displayHelper = function DisplayHelper(){
         
         if (!document) throw new Error("No document object to work with")   // check to see if there is a document object
-        
-        // get all the relevant elements in the DOM
-        const curr1 = document.getElementById('curr-1')
-        const curr2 = document.getElementById('curr-2')
-        const updateDialog = document.getElementById('update-display')
-        const updateInstallButton = document.getElementById('update-accept')
-        const updateDismissButton = document.getElementById('update-dismiss')
-        
-        // if update dismissed - hide the message
-        updateDismissButton.addEventListener('click',()=>{
-            hideUpdate()
-        })
 
-        // called to show the update messagebox for the service worker
-        const showUpdate = ()=>{
-            updateDialog.classList.remove('hidden')
-        }
-
-        // called to hide the message box for updating the service worker
-        const hideUpdate = ()=>{
-            updateDialog.classList.add('hidden')
-        }
-
-        // when the update install button pressed - send a message to the new service worker to take over
-        const updateListener = (worker)=>{
-            updateInstallButton.addEventListener('click', ()=>{
-                worker.postMessage({action: 'skipWaiting'})
+        // add the events to the currencySelectButtons
+        const showCurrSelect = (buttonClicked, currButtons)=>{
+            // remove selected class from all buttons
+            currButtons.forEach((button)=>{
+                button.classList.remove('selected')
             })
+            // set the currency to the same as the selected button
+            
+            // add the selected class to the selected button
+            buttonClicked.classList.add('selected')
+            
+            return 
         }
 
-        // TODO : function to display the currency conversions 
+        const revealPopup = (popupElement)=>{
+            return popupElement.classList.add('active')
+        }
+        const hidePopup = (popupElement)=>{
+            return popupElement.classList.remove('active')
+        }
+
+        const updateCurrencyLabel = (labelElement,currencyString)=>{
+            labelElement.innerText = currencyString
+        }
 
         return {
-            showUpdate,
-            hideUpdate,
-            updateListener
+            revealPopup,
+            hidePopup,
+            showCurrSelect,
+            updateCurrencyLabel
         }
     }()
 
@@ -79,29 +92,74 @@ window.onload = ()=>{
 
     const conversionHelper = function ConversionHelper(){
 
+        let coreUSDValue = 0;
+        let curr = ['USD', 'GBP']
+
         let rates = {
             USD: 1,
             GBP: 0.752245
         }
 
-        const useRates = (newRates)=>{
-            rates = newRates
+        const setRates = (newRates)=>{
+            return rates = newRates
         }
 
         const convertValue= ({sourceValue=0, sourceCurrency='USD', targetCurrency='GBP'}={})=>{
-            const USD = rates[sourceCurrency] * sourceValue // convert to base currency (USD)
+            const USD = sourceValue / rates[sourceCurrency]   // convert to base currency (USD)
             return USD*rates[targetCurrency]   // return value 
         }
 
+        // TODO: functions to update what currency is being used
+
+        const getCurr = (currIndex)=>{
+            return curr[currIndex-1]
+        }
+
+        const setCurr = (currIndex, newCurr)=>{
+            curr[currIndex-1] = newCurr
+        }
+
+        const updateConversions = (convertValue=coreUSDValue, sourceCurrency='USD')=>{
+            
+            // normalise to USD
+            const incomingUSDValue = conversionHelper.convertValue({
+                sourceValue: convertValue,
+                sourceCurrency: sourceCurrency,
+                targetCurrency: 'USD'
+            })
+    
+            coreUSDValue = incomingUSDValue; // store this value for the future
+    
+            // update the value in top box
+            const conversion1 = conversionHelper.convertValue({
+                sourceValue: incomingUSDValue,
+                sourceCurrency:'USD',
+                targetCurrency: curr[0]
+            }).toFixed(2)
+    
+            // update value in bottom box
+            const conversion2 = conversionHelper.convertValue({
+                sourceValue: incomingUSDValue,
+                sourceCurrency: 'USD',
+                targetCurrency: curr[1]
+            }).toFixed(2)
+            return { topValue: conversion1, bottomValue: conversion2}
+        }
+
         return {
-            useRates,
-            convertValue
+            setRates,
+            convertValue,
+            getCurr,
+            setCurr,
+            updateConversions
         }
 
     }()
 
-    const serviceWorkerHelper = function ServiceWorkerHelper(workerLocation){
+    const serviceWorkerHelper = function ServiceWorkerHelper(workerLocation, updateUI, updateTriggerEl){
         if (!navigator.serviceWorker) throw new Error("service worker not supported")
+
+        const updateTriggerElement = updateTriggerEl;
 
         // register the service worker
         navigator.serviceWorker.register(workerLocation).then((reg)=>{
@@ -142,27 +200,89 @@ window.onload = ()=>{
 
             worker.addEventListener('statechange', ()=>{
                 if(worker.state == 'installed'){
-                    displayHelper.updateListener(worker)
-                    displayHelper.showUpdate()
+
+                    updateTriggerElement.addEventListener('click', ()=>{ // add click event to the UI
+                        worker.postMessage({action: 'skipWaiting'})
+                    })
+
+                    displayHelper.showPopup(updateUI)  // show the UI
                 }
             })
         }
 
-    }('/sw.js')
+    }('/sw.js',updateDialog, updateInstallButton)
 
     
+// 
+// IMPLEMENTATION SPECIFIC COMMANDS
+//
+
     // grab the rates
     networkHelper.getRates().then((rates)=>{
-        conversionHelper.useRates(rates)
+        conversionHelper.setRates(rates)
     })
+
+// == Update functionality
+    // dismiss the update 
+    updateDismissButton.addEventListener('click',()=>{
+        displayHelper.hidePopup(updateDismissButton)
+    })
+
+
+
+// == currency relevant events
 
     // event listeners -- when the input is modified 
-    curr1.addEventListener('keyup',()=>{        
-        curr2.value = conversionHelper.convertValue({sourceValue: curr1.value}).toFixed(2)
+    curr1Input.addEventListener('keyup',(e)=>{        
+        const convertValues = conversionHelper.updateConversions(event.target.value, conversionHelper.getCurr(1))
+        curr2Input.value = convertValues.bottomValue;
     })
 
-    curr2.addEventListener('keyup',()=>{
-        curr1.value = conversionHelper.convertValue({sourceValue: curr2.value}).toFixed(2)
+    curr2Input.addEventListener('keyup',(e)=>{
+        const convertValues = conversionHelper.updateConversions(event.target.value, conversionHelper.getCurr(2))
+        curr1Input.value = convertValues.topValue;
+    })
+
+    // === TODO: currencySelect relevant events
+    topCurrRevealButton.addEventListener('click', ()=>{
+        displayHelper.revealPopup(currPopupTop);
+    })
+    bottomCurrRevealButton.addEventListener('click', ()=>{
+        displayHelper.revealPopup(currPopupBottom)
+    })
+    currSelectButtonsTop.forEach((button)=>{
+        button.addEventListener('click', (event)=>{
+            let newConvValues;
+
+            displayHelper.showCurrSelect(event.target, currSelectButtonsTop); // display the tick on the currency
+            displayHelper.updateCurrencyLabel(currLabelTop, event.target.innerText) // change the label at the top
+
+            conversionHelper.setCurr(1, event.target.innerText) // set the new currency for top
+            
+            newConvValues = conversionHelper.updateConversions() // get the new values for the conversion (using defaults)
+            curr1Input.value = newConvValues.topValue;
+            curr2Input.value = newConvValues.bottomValue;
+
+            //changeCurrency
+            displayHelper.hidePopup(currPopupTop)// hide the currency select
+            return
+        })
+    })
+    currSelectButtonsBottom.forEach((button)=>{
+        button.addEventListener('click',(event)=>{
+            let newConvValues;
+
+            displayHelper.showCurrSelect(event.target, currSelectButtonsBottom);
+            displayHelper.updateCurrencyLabel(currLabelBottom, event.target.innerText)
+            // change currency
+            conversionHelper.setCurr(2, event.target.innerText)
+
+            newConvValues = conversionHelper.updateConversions()
+            curr1Input.value = newConvValues.topValue;
+            curr2Input.value = newConvValues.bottomValue;
+
+            displayHelper.hidePopup(currPopupBottom)
+        })
     })
 
     // for dev purposes - expose the modules for inspection
