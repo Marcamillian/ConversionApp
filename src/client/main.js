@@ -21,8 +21,8 @@ window.onload = ()=>{
     const currPopupTop = document.querySelector('.curr-select.top')
     const currPopupBottom = document.querySelector('.curr-select.bottom')
     // currency option buttons
-    const currSelectButtonsTop = document.querySelectorAll('.curr-select.top button')
-    const currSelectButtonsBottom = document.querySelectorAll('.curr-select.bottom button')
+    let currSelectButtonsTop = document.querySelectorAll('.curr-select.top button')
+    let currSelectButtonsBottom = document.querySelectorAll('.curr-select.bottom button')
 
     // helper modules
     const displayHelper = function DisplayHelper(){
@@ -58,13 +58,21 @@ window.onload = ()=>{
             const currButton = document.createElement('button');
             const checkElement = document.createElement('img');
 
-            currButton.innerText = currLabel
+            checkElement.src = "assets/checkmark.svg";
             checkElement.classList.add("checkmark")
             if(selected) checkElement.classList.add('selected')
+
+            currButton.innerText = currLabel
             
             currButton.appendChild(checkElement)
 
             return currButton
+        }
+
+        const emptyElement = (element)=>{
+            while(element.children.length > 0){
+                element.children[0].remove()
+            }
         }
 
         return {
@@ -72,7 +80,8 @@ window.onload = ()=>{
             hidePopup,
             showCurrSelect,
             updateCurrencyLabel,
-            generateCurrSelectButton
+            generateCurrSelectButton,
+            emptyElement
         }
     }()
 
@@ -235,10 +244,52 @@ window.onload = ()=>{
 // 
 // IMPLEMENTATION SPECIFIC COMMANDS
 //
+    const currSelectCallback = (event,isTopCurr)=>{
+    
+        const currIndex = (isTopCurr) ? 1:2;
+        const currLabel = (isTopCurr) ? currLabelTop: currLabelBottom
+        const currPopup = (isTopCurr) ? currPopupTop: currPopupBottom
+        const currSelectButtons = (isTopCurr) ? currSelectButtonsTop: currSelectButtonsBottom;
+
+        let newConvValues;
+        
+        displayHelper.showCurrSelect(event.target, currSelectButtons); // display the tick on the currency
+        displayHelper.updateCurrencyLabel(currLabel, event.target.innerText) // change the label at the top
+
+        conversionHelper.setCurr(currIndex, event.target.innerText) // set the new currency for top
+        
+        newConvValues = conversionHelper.updateConversions() // get the new values for the conversion (using defaults)
+        curr1Input.value = newConvValues.topValue;
+        curr2Input.value = newConvValues.bottomValue;
+
+        //changeCurrency
+        displayHelper.hidePopup(currPopup)// hide the currency select
+        return
+    }
 
     // grab the rates
     networkHelper.getRates().then((rates)=>{
+        let currLabels;
+
+
         conversionHelper.setRates(rates)
+        labels = conversionHelper.getCurrLabels()
+
+        // empty the popups of their buttons
+        displayHelper.emptyElement(currPopupTop)
+        displayHelper.emptyElement(currPopupBottom)
+
+        labels.forEach((currLabel)=>{
+            const topButton = displayHelper.generateCurrSelectButton(currLabel, currLabel == conversionHelper.getCurr(1))
+            const bottomButton = displayHelper.generateCurrSelectButton(currLabel, currLabel == conversionHelper.getCurr(2))
+
+            topButton.addEventListener('click', (event)=>{ currSelectCallback(event, true)})
+            bottomButton.addEventListener('click', (event)=>{ currSelectCallback(event, false)})
+
+            currPopupTop.appendChild(topButton)
+            currPopupBottom.appendChild(bottomButton)
+        })
+
     })
 
 // == Update functionality
@@ -250,27 +301,6 @@ window.onload = ()=>{
 
 
 // == currency relevant events
-
-    const currSelectCallback = (event,isTopCurr)=>{
-
-        const currIndex = (isTopCurr) ? 1:2;
-        const currLabel = (isTopCurr) ? currLabelTop: currLabelBottom
-
-        let newConvValues;
-        
-        displayHelper.showCurrSelect(event.target, currSelectButtonsTop); // display the tick on the currency
-        displayHelper.updateCurrencyLabel(currLabel, event.target.innerText) // change the label at the top
-
-        conversionHelper.setCurr(currIndex, event.target.innerText) // set the new currency for top
-        
-        newConvValues = conversionHelper.updateConversions() // get the new values for the conversion (using defaults)
-        curr1Input.value = newConvValues.topValue;
-        curr2Input.value = newConvValues.bottomValue;
-
-        //changeCurrency
-        displayHelper.hidePopup(currPopupTop)// hide the currency select
-        return
-    }
 
     // event listeners -- when the input is modified 
     curr1Input.addEventListener('keyup',(e)=>{        
@@ -290,40 +320,18 @@ window.onload = ()=>{
     bottomCurrRevealButton.addEventListener('click', ()=>{
         displayHelper.revealPopup(currPopupBottom)
     })
+    /*
     currSelectButtonsTop.forEach((button)=>{
         button.addEventListener('click', (event)=>{
-            let newConvValues;
-
-            displayHelper.showCurrSelect(event.target, currSelectButtonsTop); // display the tick on the currency
-            displayHelper.updateCurrencyLabel(currLabelTop, event.target.innerText) // change the label at the top
-
-            conversionHelper.setCurr(1, event.target.innerText) // set the new currency for top
-            
-            newConvValues = conversionHelper.updateConversions() // get the new values for the conversion (using defaults)
-            curr1Input.value = newConvValues.topValue;
-            curr2Input.value = newConvValues.bottomValue;
-
-            //changeCurrency
-            displayHelper.hidePopup(currPopupTop)// hide the currency select
-            return
+            return currSelectCallback(event, true)
         })
     })
     currSelectButtonsBottom.forEach((button)=>{
         button.addEventListener('click',(event)=>{
-            let newConvValues;
-
-            displayHelper.showCurrSelect(event.target, currSelectButtonsBottom);
-            displayHelper.updateCurrencyLabel(currLabelBottom, event.target.innerText)
-            // change currency
-            conversionHelper.setCurr(2, event.target.innerText)
-
-            newConvValues = conversionHelper.updateConversions()
-            curr1Input.value = newConvValues.topValue;
-            curr2Input.value = newConvValues.bottomValue;
-
-            displayHelper.hidePopup(currPopupBottom)
+            return currSelectCallback(event, false)
         })
     })
+    */
 
     // for dev purposes - expose the modules for inspection
     window.convAppObjs = {
