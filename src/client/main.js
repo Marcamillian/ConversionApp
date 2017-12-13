@@ -58,11 +58,14 @@ window.onload = ()=>{
             const currButton = document.createElement('button');
             const checkElement = document.createElement('img');
 
+            currButton.innerText = currLabel
+            if(selected) currButton.classList.add('selected')
+
             checkElement.src = "assets/checkmark.svg";
             checkElement.classList.add("checkmark")
-            if(selected) checkElement.classList.add('selected')
+            
 
-            currButton.innerText = currLabel
+            
             
             currButton.appendChild(checkElement)
 
@@ -341,3 +344,10 @@ window.onload = ()=>{
         serviceWorkerHelper
     }
 }
+
+/* TODO: 
+
+    - curr checkmark on the wrong side
+    - selected is not clearing
+    - add the update of buttons/labels with the rates call
+*/
