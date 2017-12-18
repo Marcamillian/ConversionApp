@@ -57,17 +57,19 @@ window.onload = ()=>{
         const generateCurrSelectButton = (currLabel, selected)=>{
             const currButton = document.createElement('button');
             const checkElement = document.createElement('img');
+            const labelName = document.createElement('p')
 
-            currButton.innerText = currLabel
-            if(selected) currButton.classList.add('selected')
+            
+            
+            labelName.innerText = currLabel // set the labelname
 
             checkElement.src = "assets/checkmark.svg";
             checkElement.classList.add("checkmark")
-            
 
-            
+            if(selected) currButton.classList.add('selected')
             
             currButton.appendChild(checkElement)
+            currButton.appendChild(labelName)
 
             return currButton
         }
@@ -236,7 +238,7 @@ window.onload = ()=>{
                         worker.postMessage({action: 'skipWaiting'})
                     })
 
-                    displayHelper.showPopup(updateUI)  // show the UI
+                    displayHelper.revealPopup(updateUI)  // show the UI
                 }
             })
         }
@@ -253,11 +255,13 @@ window.onload = ()=>{
         const currLabel = (isTopCurr) ? currLabelTop: currLabelBottom
         const currPopup = (isTopCurr) ? currPopupTop: currPopupBottom
         const currSelectButtons = (isTopCurr) ? currSelectButtonsTop: currSelectButtonsBottom;
+        const currButton = event.target.parentNode;
+        const currButtonCurrName = currButton.querySelector('p').innerText
 
         let newConvValues;
         
-        displayHelper.showCurrSelect(event.target, currSelectButtons); // display the tick on the currency
-        displayHelper.updateCurrencyLabel(currLabel, event.target.innerText) // change the label at the top
+        displayHelper.showCurrSelect(currButton, currSelectButtons); // display the tick on the currency
+        displayHelper.updateCurrencyLabel(currLabel, currButtonCurrName) // change the label at the top
 
         conversionHelper.setCurr(currIndex, event.target.innerText) // set the new currency for top
         
@@ -276,6 +280,7 @@ window.onload = ()=>{
 
 
         conversionHelper.setRates(rates)
+        
         labels = conversionHelper.getCurrLabels()
 
         // empty the popups of their buttons
@@ -292,6 +297,10 @@ window.onload = ()=>{
             currPopupTop.appendChild(topButton)
             currPopupBottom.appendChild(bottomButton)
         })
+
+        // update the currSelectButtons - so they can be cleared
+        currSelectButtonsTop = document.querySelectorAll('.curr-select.top button')
+        currSelectButtonsBottom = document.querySelectorAll('.curr-select.bottom button')
 
     })
 
@@ -323,18 +332,6 @@ window.onload = ()=>{
     bottomCurrRevealButton.addEventListener('click', ()=>{
         displayHelper.revealPopup(currPopupBottom)
     })
-    /*
-    currSelectButtonsTop.forEach((button)=>{
-        button.addEventListener('click', (event)=>{
-            return currSelectCallback(event, true)
-        })
-    })
-    currSelectButtonsBottom.forEach((button)=>{
-        button.addEventListener('click',(event)=>{
-            return currSelectCallback(event, false)
-        })
-    })
-    */
 
     // for dev purposes - expose the modules for inspection
     window.convAppObjs = {
@@ -344,10 +341,3 @@ window.onload = ()=>{
         serviceWorkerHelper
     }
 }
-
-/* TODO: 
-
-    - curr checkmark on the wrong side
-    - selected is not clearing
-    - add the update of buttons/labels with the rates call
-*/
