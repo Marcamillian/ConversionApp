@@ -9,16 +9,16 @@
 
     <body class="shadow body-width">
 
-        <div class="currency-label">
+        <div class="currency-label top">
             <h2>USD</h2>
-            <img src="assets/dropdown.svg" class="shadow"/>
+            <img class="dropdown shadow" src="assets/dropdown.svg" class="shadow"/>
         </div>
         <input id ="curr-1" class="currency-input number-display" type="number" name="USD"></input>
         
         <input id="curr-2" class="currency-input number-display" type="number" name="GBP"></input>
-        <div class="currency-label">
+        <div class="currency-label bottom">
             <h2>GBP</h2>
-            <img src="assets/dropdown.svg" class="shadow"/>
+            <img class="dropdown shadow" src="assets/dropdown.svg" class="shadow"/>
         </div>
 
         <!-- update notification -->
@@ -32,36 +32,20 @@
 
         <!-- currency change dialog -->
         <div class="curr-select top dialog-popup body-width">
-            <button class="selected"> <img src="assets/checkmark.svg" class="checkmark"/> 
-                USD
-            </button>
-            
-            <button> <img src="assets/checkmark.svg" class="checkmark"/> 
-                GBP
-            </button>
-            <button> <img src="assets/checkmark.svg" class="checkmark"/> 
-                EUR 
-            </button>
-            <button> <img src="assets/checkmark.svg" class="checkmark"/> 
-                IDR 
-            </button>
+            <button class="selected"> <img src="assets/checkmark.svg" class="checkmark"/>USD</button>
+            <button> <img src="assets/checkmark.svg" class="checkmark"/>GBP</button>
+            <button> <img src="assets/checkmark.svg" class="checkmark"/>EUR</button>
+            <button> <img src="assets/checkmark.svg" class="checkmark"/>IDR</button>
         </div>
 
         <div class="curr-select bottom dialog-popup body-width">
-            <button class="selected"> <img src="assets/checkmark.svg" class="checkmark"/> 
-                USD
-            </button>
-            
-            <button> <img src="assets/checkmark.svg" class="checkmark"/> 
-                GBP
-            </button>
-            <button> <img src="assets/checkmark.svg" class="checkmark"/> 
-                EUR 
-            </button>
-            <button> <img src="assets/checkmark.svg" class="checkmark"/> 
-                IDR 
-            </button>
+            <button> <img src="assets/checkmark.svg" class="checkmark"/>USD</button>
+            <button class="selected"> <img src="assets/checkmark.svg" class="checkmark"/>GBP</button>
+            <button> <img src="assets/checkmark.svg" class="checkmark"/>EUR</button>
+            <button> <img src="assets/checkmark.svg" class="checkmark"/>IDR</button>
         </div>
+
+        <!-- TODO: Give user a way to switch currencies -->
 
     </body>
 

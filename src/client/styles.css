@@ -19,6 +19,8 @@ body{
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    overflow:hidden;
 }
 
 
@@ -129,6 +131,11 @@ h1,h2{
 .curr-select button.selected .checkmark{
     display:inline-block;
 }
+.curr-select p{
+    margin:0px;
+    display:inline-block;
+}
+
 
 .curr-select.top{
     top:-52vh
