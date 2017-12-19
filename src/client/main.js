@@ -1,7 +1,7 @@
 window.onload = ()=>{
 
 
-    // === GET ALL THE RELEVANT ELEMENTS IN THE DOM
+// === GET ALL THE RELEVANT ELEMENTS IN THE DOM
 
     // currency conversion boxes
     const curr1Input = document.getElementById('curr-1')
@@ -24,7 +24,7 @@ window.onload = ()=>{
     let currSelectButtonsTop = document.querySelectorAll('.curr-select.top button')
     let currSelectButtonsBottom = document.querySelectorAll('.curr-select.bottom button')
 
-    // helper modules
+// helper modules
     const displayHelper = function DisplayHelper(){
         
         if (!document) throw new Error("No document object to work with")   // check to see if there is a document object
@@ -246,24 +246,25 @@ window.onload = ()=>{
     }('/sw.js',updateDialog, updateInstallButton)
 
     
-// 
 // IMPLEMENTATION SPECIFIC COMMANDS
-//
+
+    // callback for when currency select buttons are clicked
     const currSelectCallback = (event,isTopCurr)=>{
     
         const currIndex = (isTopCurr) ? 1:2;
         const currLabel = (isTopCurr) ? currLabelTop: currLabelBottom
         const currPopup = (isTopCurr) ? currPopupTop: currPopupBottom
         const currSelectButtons = (isTopCurr) ? currSelectButtonsTop: currSelectButtonsBottom;
-        const currButton = event.target.parentNode;
+        const currButton = (event.target.tagName != 'button') ? event.target.parentNode : event.target; // if the click on a child - set parent OR - set the parent as the button
         const currButtonCurrName = currButton.querySelector('p').innerText
+
 
         let newConvValues;
         
         displayHelper.showCurrSelect(currButton, currSelectButtons); // display the tick on the currency
         displayHelper.updateCurrencyLabel(currLabel, currButtonCurrName) // change the label at the top
 
-        conversionHelper.setCurr(currIndex, event.target.innerText) // set the new currency for top
+        conversionHelper.setCurr(currIndex, currButtonCurrName) // set the new currency for top
         
         newConvValues = conversionHelper.updateConversions() // get the new values for the conversion (using defaults)
         curr1Input.value = newConvValues.topValue;
@@ -304,7 +305,7 @@ window.onload = ()=>{
 
     })
 
-// == Update functionality
+    // == Update functionality
     // dismiss the update 
     updateDismissButton.addEventListener('click',()=>{
         displayHelper.hidePopup(updateDismissButton)
@@ -312,7 +313,7 @@ window.onload = ()=>{
 
 
 
-// == currency relevant events
+    // == currency relevant events
 
     // event listeners -- when the input is modified 
     curr1Input.addEventListener('keyup',(e)=>{        
@@ -325,7 +326,6 @@ window.onload = ()=>{
         curr1Input.value = convertValues.topValue;
     })
 
-    // === TODO: currencySelect relevant events
     topCurrRevealButton.addEventListener('click', ()=>{
         displayHelper.revealPopup(currPopupTop);
     })
@@ -333,7 +333,9 @@ window.onload = ()=>{
         displayHelper.revealPopup(currPopupBottom)
     })
 
-    // for dev purposes - expose the modules for inspection
+
+
+// expose the modules for inspection- dev only
     window.convAppObjs = {
         displayHelper,
         networkHelper,
