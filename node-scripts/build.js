@@ -14,42 +14,35 @@ const promiseWrap = (data, failed)=>{    // return promise that resolves to the 
 }
 
 
-// remove the old dist folder !! TODO: and its contents - // create the new dist folder & subfolders
-promiseWrap(rimraf(dir, ()=>{}) // delete the old public directory
-).then(    // make the new directory
-    ()=>{   fs.mkdirSync(dir);
-            return promiseWrap()},
-    ()=>{throw new Error(`${dir} not created`)}
-).then(     // copy the files from src to public folder
-    ()=>{ return promiseWrap(ncp('./src/client', dir)) },
-    ()=>{}
-).then(     // browserify the main file
-    ()=>{
-        b.add(`${dir}/main.js`)
-        b.bundle().pipe(fs.createWriteStream(`${dir}/main_bundle1.js`))
-        // fs.rename()
-        // fs.unlink()
-        return promiseWrap()
-    },
-    ()=>{}
-).then(
-    //()=>{ rimraf(`${dir}/modules`, ()=>{console.log("done")})}
-)
-.catch((err)=>{
-    console.log(`Build abandoned ${err}`)
+// remove the directory if it already exists
+new Promise((resolve,reject)=>{ rimraf(dir, resolve)
+}).then(()=>{ // THEN make the new public directory
+    return new Promise((resolve, reject)=>{ fs.mkdir(dir, resolve) })
+}).then(()=>{ // THEN copy across the client files
+    return new Promise((resolve, reject)=>{ ncp('./src/client', dir, resolve)})
+}).then(()=>{ // THEN browserify the main file
+    return new Promise((resolve, reject)=>{
+        let fileWriteOperation = fs.createWriteStream(`${dir}/main_bundle.js`)
+        fileWriteOperation.on('finish', resolve()) // carry on the promise when it finishes the file write
+
+        b.add(`${dir}/main.js`);
+        b.bundle().pipe(fileWriteOperation)
+    })
+}).then(()=>{
+    console.log("Things are done")
 })
 
 
 
 
-// copy the required files
 
 
-// browserify the module test file into a bundle
-///const destinationFile = fs.createWriteStream('main_bundled.js')
 
 
-///b.add('./node-scripts/test.js');
-///b.bundle().pipe(destinationFile)
+// THEN parse the file through babel
 
-///destinationFile.on('finish', ()=>{console.log("browserify bundle completed")})
+// THEN write the file to disk
+
+// THEN remove the modules directory
+
+// THEN remove/rename the bundle
