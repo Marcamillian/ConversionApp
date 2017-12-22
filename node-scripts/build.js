@@ -8,8 +8,6 @@ const dest_dir = './public';
 const source_dir = './src/client'
 let dirDeletePromise;
 
-//fs.rename('./node-scripts/test.js', './node-scripts/testrename.js', (err)=>{console.log(`Rename file : ${err}`)})
-
 // remove the directory if it already exists
 new Promise((resolve,reject)=>{ rimraf(dest_dir, resolve)
 }).then(()=>{ // THEN make the new public directory
@@ -29,7 +27,6 @@ new Promise((resolve,reject)=>{ rimraf(dest_dir, resolve)
 
         fileWriteOperation.on('finish', resolve()) // resolve the promise when it finishes the file write
     })
-// THEN parse the file through babel
 }).then((err, result)=>{ // THEN write the file to dist
     console.log(`babel parse: ${result}`)
     return new Promise((resolve, reject)=>{ resolve()})

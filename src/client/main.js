@@ -137,7 +137,7 @@ window.onload = ()=>{
             return USD*rates[targetCurrency]   // return value 
         }
 
-        // TODO: functions to update what currency is being used
+        // functions to update what currency is being used
 
         const getCurr = (currIndex)=>{
             return curr[currIndex-1]
