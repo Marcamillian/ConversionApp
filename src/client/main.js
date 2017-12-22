@@ -282,13 +282,13 @@ window.onload = ()=>{
 
         conversionHelper.setRates(rates)
         
-        labels = conversionHelper.getCurrLabels()
+        currLabels = conversionHelper.getCurrLabels()
 
         // empty the popups of their buttons
         displayHelper.emptyElement(currPopupTop)
         displayHelper.emptyElement(currPopupBottom)
 
-        labels.forEach((currLabel)=>{
+        currLabels.forEach((currLabel)=>{
             const topButton = displayHelper.generateCurrSelectButton(currLabel, currLabel == conversionHelper.getCurr(1))
             const bottomButton = displayHelper.generateCurrSelectButton(currLabel, currLabel == conversionHelper.getCurr(2))
 

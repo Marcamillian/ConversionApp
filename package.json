@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "start-local": "node ./src/server/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node ./node-scripts/build.js",
-    "transform": "babel public -d lib"
+    "build": "node ./node-scripts/build.js"
   },
   "author": "Marc Vousden",
   "license": "MIT",
