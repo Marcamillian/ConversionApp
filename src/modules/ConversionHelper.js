@@ -1,8 +1,9 @@
 
 const ConversionHelper = ()=>{
+    
+    let returnObject = {}
     let coreUSDValue = 0;
     let curr = ['USD', 'GBP']
-
     let rates = {
         USD: 1,
         GBP: 0.752245
@@ -30,7 +31,7 @@ const ConversionHelper = ()=>{
     const updateConversions = (convertValue=coreUSDValue, sourceCurrency='USD')=>{
         
         // normalise to USD
-        const incomingUSDValue = conversionHelper.convertValue({
+        const incomingUSDValue = returnObject.convertValue({
             sourceValue: convertValue,
             sourceCurrency: sourceCurrency,
             targetCurrency: 'USD'
@@ -39,14 +40,14 @@ const ConversionHelper = ()=>{
         coreUSDValue = incomingUSDValue; // store this value for the future
 
         // update the value in top box
-        const conversion1 = conversionHelper.convertValue({
+        const conversion1 = returnObject.convertValue({
             sourceValue: incomingUSDValue,
             sourceCurrency:'USD',
             targetCurrency: curr[0]
         }).toFixed(2)
 
         // update value in bottom box
-        const conversion2 = conversionHelper.convertValue({
+        const conversion2 = returnObject.convertValue({
             sourceValue: incomingUSDValue,
             sourceCurrency: 'USD',
             targetCurrency: curr[1]
@@ -58,7 +59,7 @@ const ConversionHelper = ()=>{
         return Object.keys(rates)
     }
 
-    return Object.assign(
+    return Object.assign(returnObject,
         {
             setRates,
             convertValue,
