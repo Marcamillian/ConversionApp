@@ -151,6 +151,22 @@ h1,h2{
     top:50vh;
 }
 
+#spend-list{
+    height:100%;
+    width:75vw;
+    right: -75vw;
+}
+#spend-list.active{
+    right: 0vw;
+}
+#spend-list .tab{
+    background-color: #000000D8;
+
+    position: relative;
+    width: 100px;
+    height:74px;
+    left: -100px;
+}
 
 
 /* general attributes to add to elements */
@@ -172,8 +188,8 @@ h1,h2{
     background-color: #000000D8;
     color:white;
 
-    -webkit-transition: top 1s;
-    transition: top 1s;
+    -webkit-transition: top 1s, right 1s;
+    transition: top 1s, right 1s;
 }
 
 button{

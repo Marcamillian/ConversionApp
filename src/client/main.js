@@ -27,6 +27,11 @@ window.onload = ()=>{
     // currency option buttons
     let currSelectButtonsTop = document.querySelectorAll('.curr-select.top button')
     let currSelectButtonsBottom = document.querySelectorAll('.curr-select.bottom button')
+    // list elements
+    const listPopup = document.querySelector("#spend-list")
+    const listPopupShowButton = document.querySelector("#spend-list button.show")
+    const listPopupAddButton = document.querySelector(!"#spend-list button.add")
+
 
 // helper modules
     const displayHelper = function DisplayHelper(){
@@ -97,77 +102,6 @@ window.onload = ()=>{
     const networkHelper = NetworkModule()
 
     const conversionHelper = ConversionModule()
-    
-    /*function ConversionHelper(){
-
-        let coreUSDValue = 0;
-        let curr = ['USD', 'GBP']
-
-        let rates = {
-            USD: 1,
-            GBP: 0.752245
-        }
-
-        const setRates = (newRates)=>{
-            return rates = newRates
-        }
-
-        const convertValue= ({sourceValue=0, sourceCurrency='USD', targetCurrency='GBP'}={})=>{
-            const USD = sourceValue / rates[sourceCurrency]   // convert to base currency (USD)
-            return USD*rates[targetCurrency]   // return value 
-        }
-
-        // functions to update what currency is being used
-
-        const getCurr = (currIndex)=>{
-            return curr[currIndex-1]
-        }
-
-        const setCurr = (currIndex, newCurr)=>{
-            curr[currIndex-1] = newCurr
-        }
-
-        const updateConversions = (convertValue=coreUSDValue, sourceCurrency='USD')=>{
-            
-            // normalise to USD
-            const incomingUSDValue = conversionHelper.convertValue({
-                sourceValue: convertValue,
-                sourceCurrency: sourceCurrency,
-                targetCurrency: 'USD'
-            })
-    
-            coreUSDValue = incomingUSDValue; // store this value for the future
-    
-            // update the value in top box
-            const conversion1 = conversionHelper.convertValue({
-                sourceValue: incomingUSDValue,
-                sourceCurrency:'USD',
-                targetCurrency: curr[0]
-            }).toFixed(2)
-    
-            // update value in bottom box
-            const conversion2 = conversionHelper.convertValue({
-                sourceValue: incomingUSDValue,
-                sourceCurrency: 'USD',
-                targetCurrency: curr[1]
-            }).toFixed(2)
-            return { topValue: conversion1, bottomValue: conversion2}
-        }
-
-        const getCurrLabels = ()=>{
-            return Object.keys(rates)
-        }
-
-        return {
-            setRates,
-            convertValue,
-            getCurr,
-            setCurr,
-            updateConversions,
-            getCurrLabels
-        }
-
-    }()*/
 
     const serviceWorkerHelper = function ServiceWorkerHelper(workerLocation, updateUI, updateTriggerEl){
         if (!navigator.serviceWorker) throw new Error("service worker not supported")
@@ -311,6 +245,15 @@ window.onload = ()=>{
     })
     bottomCurrRevealButton.addEventListener('click', ()=>{
         displayHelper.revealPopup(currPopupBottom)
+    })
+
+    // == list related events
+    listPopupShowButton.addEventListener('click', ()=>{
+        if(listPopup.classList.contains("active")){
+            displayHelper.hidePopup(listPopup)
+        }else{
+            displayHelper.revealPopup(listPopup)
+        } 
     })
 
 
