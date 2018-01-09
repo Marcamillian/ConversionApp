@@ -9,7 +9,7 @@ const app = express();
 let server;       // http server
 
 // == Set up to use the static location
-app.use(express.static('./src/client'))
+app.use(express.static('./public'))
 
 // == define endpoints for posting
 

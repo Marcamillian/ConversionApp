@@ -1,3 +1,7 @@
+const ConversionModule = require(`./../modules/ConversionHelper.js`)
+const NetworkModule = require('./../modules/NetworkHelper.js')
+const DisplayHelper = require('./../modules/DisplayHelper.js')
+
 window.onload = ()=>{
 
 
@@ -90,35 +94,11 @@ window.onload = ()=>{
         }
     }()
 
-    const networkHelper = function NetworkHelper(){
-        const handleResponse = (response)=>{ // checks if the request for the rates was successful
+    const networkHelper = NetworkModule()
 
-            if(response.ok){
-                return response.json()
-            }else{
-                Promise.reject( new Error ('Unexpected Response'))
-            }
-        };
-
-        const logMessage = (message)=>{
-            console.log(message)
-            return message
-        }
-
-        const getRates = ()=>{  // returns a promise that resolves to the data
-            return fetch('/rates', {method: 'GET',credentials:'same-origin' })
-                .then(handleResponse)
-                .catch((err)=>{ logMessage(err.message) })
-        }
-
-        return{
-            getRates
-        }
-
-
-    }()
-
-    const conversionHelper = function ConversionHelper(){
+    const conversionHelper = ConversionModule()
+    
+    /*function ConversionHelper(){
 
         let coreUSDValue = 0;
         let curr = ['USD', 'GBP']
@@ -137,7 +117,7 @@ window.onload = ()=>{
             return USD*rates[targetCurrency]   // return value 
         }
 
-        // TODO: functions to update what currency is being used
+        // functions to update what currency is being used
 
         const getCurr = (currIndex)=>{
             return curr[currIndex-1]
@@ -187,7 +167,7 @@ window.onload = ()=>{
             getCurrLabels
         }
 
-    }()
+    }()*/
 
     const serviceWorkerHelper = function ServiceWorkerHelper(workerLocation, updateUI, updateTriggerEl){
         if (!navigator.serviceWorker) throw new Error("service worker not supported")
@@ -282,13 +262,13 @@ window.onload = ()=>{
 
         conversionHelper.setRates(rates)
         
-        labels = conversionHelper.getCurrLabels()
+        currLabels = conversionHelper.getCurrLabels()
 
         // empty the popups of their buttons
         displayHelper.emptyElement(currPopupTop)
         displayHelper.emptyElement(currPopupBottom)
 
-        labels.forEach((currLabel)=>{
+        currLabels.forEach((currLabel)=>{
             const topButton = displayHelper.generateCurrSelectButton(currLabel, currLabel == conversionHelper.getCurr(1))
             const bottomButton = displayHelper.generateCurrSelectButton(currLabel, currLabel == conversionHelper.getCurr(2))
 
