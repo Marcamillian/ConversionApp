@@ -2,6 +2,7 @@ const ConversionModule = require(`./../modules/ConversionHelper.js`)
 const NetworkModule = require('./../modules/NetworkHelper.js')
 const DisplayHelper = require('./../modules/DisplayHelper.js')
 
+
 window.onload = ()=>{
 
 
@@ -169,7 +170,7 @@ window.onload = ()=>{
         const currLabel = (isTopCurr) ? currLabelTop: currLabelBottom
         const currPopup = (isTopCurr) ? currPopupTop: currPopupBottom
         const currSelectButtons = (isTopCurr) ? currSelectButtonsTop: currSelectButtonsBottom;
-        const currButton = (event.target.tagName != 'button') ? event.target.parentNode : event.target; // if the click on a child - set parent OR - set the parent as the button
+        const currButton = (event.target.tagName != 'BUTTON') ? event.target.parentNode : event.target; // if the click on a child - set parent OR - set the parent as the button
         const currButtonCurrName = currButton.querySelector('p').innerText
 
 
@@ -188,6 +189,20 @@ window.onload = ()=>{
         displayHelper.hidePopup(currPopup)// hide the currency select
         return
     }
+
+    /*
+    const openDatabase= ()=>{
+        return idb.open('spend-lists',1, function(upgradeDb){
+            var store = upgradeDb.createObjectStore('list', {
+                keyPath: 'id'
+            })
+            store.createIndex('by-date', 'time')
+        })
+
+        // TODO : here - https://github.com/jakearchibald/wittr/blob/task-cache-avatars/public/js/main/IndexController.js
+
+    }*/
+
 
     // grab the rates
     networkHelper.getRates().then((rates)=>{
@@ -230,12 +245,12 @@ window.onload = ()=>{
     // == currency relevant events
 
     // event listeners -- when the input is modified 
-    curr1Input.addEventListener('keyup',(e)=>{        
+    curr1Input.addEventListener('keyup',(event)=>{        
         const convertValues = conversionHelper.updateConversions(event.target.value, conversionHelper.getCurr(1))
         curr2Input.value = convertValues.bottomValue;
     })
 
-    curr2Input.addEventListener('keyup',(e)=>{
+    curr2Input.addEventListener('keyup',(event)=>{
         const convertValues = conversionHelper.updateConversions(event.target.value, conversionHelper.getCurr(2))
         curr1Input.value = convertValues.topValue;
     })
