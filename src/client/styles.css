@@ -162,21 +162,28 @@ h1,h2{
 #spend-list .tab{
     background-color: #000000D8;
 
-    position: relative;
+    position: absolute;
     width: 100px;
-    height:75px;
-    left: -100px;
+    height:50px;
+    right: 75vw;
     top:10px;
 
     display:flex;
     align-items:center;
     justify-content:space-around;
 }
-.show-list,.add-to-list{
-    width:40%;
+#spend-list .tab.expanded{
+    width:200px;
 }
 
+.show-list,.add-to-list,.expand-description{
+    height:60%
+}
 
+.item-description{
+    height:60%;
+    width:0px;
+}
 
 /* general attributes to add to elements */
 

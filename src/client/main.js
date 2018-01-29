@@ -31,8 +31,11 @@ window.onload = ()=>{
     // list elements
     const listPopup = document.querySelector("#spend-list")
     const listPopupShowButton = document.querySelector("#spend-list .show-list")
+    const listPopupTab = document.querySelector("#spend-list .tab");
     const listPopupAddToListButton = document.querySelector("#spend-list .add-to-list")
-    const listPopupAddToListDescription = document.querySelector("#spend-list #add-item-block input")
+    const listPopupItemDescription = document.querySelector("#spend-list .item-description")
+    const listPopupExpandDescription = document.querySelector(".expand-description")
+
 
 // helper modules
     const displayHelper = function DisplayHelper(){
@@ -90,13 +93,18 @@ window.onload = ()=>{
             }
         }
 
+        const toggleExpanded = (element)=>{
+            return element.classList.toggle("expanded")
+        }
+
         return {
             revealPopup,
             hidePopup,
             showCurrSelect,
             updateCurrencyLabel,
             generateCurrSelectButton,
-            emptyElement
+            emptyElement,
+            toggleExpanded
         }
     }()
 
@@ -261,9 +269,13 @@ window.onload = ()=>{
 
     listPopupAddToListButton.addEventListener('click', ()=>{
         listHelper.addRecord({
-            description: listPopupAddToListDescription.value,
+            description: listPopupItemDescription.value,
             cost:conversionHelper.getCoreUSDValue()
         })
+    })
+
+    listPopupExpandDescription.addEventListener('click', ()=>{
+        displayHelper.toggleExpanded(listPopupTab)
     })
 
 
