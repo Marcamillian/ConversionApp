@@ -1,7 +1,7 @@
 const ConversionModule = require(`./../modules/ConversionHelper.js`)
 const NetworkModule = require('./../modules/NetworkHelper.js')
 const DisplayHelper = require('./../modules/DisplayHelper.js')
-
+const ListModule = require('./../modules/ListModule.js')
 
 window.onload = ()=>{
 
@@ -30,9 +30,9 @@ window.onload = ()=>{
     let currSelectButtonsBottom = document.querySelectorAll('.curr-select.bottom button')
     // list elements
     const listPopup = document.querySelector("#spend-list")
-    const listPopupShowButton = document.querySelector("#spend-list button.show")
-    const listPopupAddButton = document.querySelector(!"#spend-list button.add")
-
+    const listPopupShowButton = document.querySelector("#spend-list .show-list")
+    const listPopupAddToListButton = document.querySelector("#spend-list .add-to-list")
+    const listPopupAddToListDescription = document.querySelector("#spend-list #add-item-block input")
 
 // helper modules
     const displayHelper = function DisplayHelper(){
@@ -100,6 +100,8 @@ window.onload = ()=>{
         }
     }()
 
+    const listHelper = ListModule();
+
     const networkHelper = NetworkModule()
 
     const conversionHelper = ConversionModule()
@@ -158,7 +160,7 @@ window.onload = ()=>{
             })
         }
 
-    }('/sw.js',updateDialog, updateInstallButton)
+    }('sw.js',updateDialog, updateInstallButton)
 
     
 // IMPLEMENTATION SPECIFIC COMMANDS
@@ -189,20 +191,6 @@ window.onload = ()=>{
         displayHelper.hidePopup(currPopup)// hide the currency select
         return
     }
-
-    /*
-    const openDatabase= ()=>{
-        return idb.open('spend-lists',1, function(upgradeDb){
-            var store = upgradeDb.createObjectStore('list', {
-                keyPath: 'id'
-            })
-            store.createIndex('by-date', 'time')
-        })
-
-        // TODO : here - https://github.com/jakearchibald/wittr/blob/task-cache-avatars/public/js/main/IndexController.js
-
-    }*/
-
 
     // grab the rates
     networkHelper.getRates().then((rates)=>{
@@ -269,6 +257,13 @@ window.onload = ()=>{
         }else{
             displayHelper.revealPopup(listPopup)
         } 
+    })
+
+    listPopupAddToListButton.addEventListener('click', ()=>{
+        listHelper.addRecord({
+            description: listPopupAddToListDescription.value,
+            cost:conversionHelper.getCoreUSDValue()
+        })
     })
 
 

@@ -59,6 +59,10 @@ const ConversionHelper = ()=>{
         return Object.keys(rates)
     }
 
+    const getCoreUSDValue = ()=>{
+        return coreUSDValue
+    }
+
     return Object.assign(returnObject,
         {
             setRates,
@@ -66,7 +70,8 @@ const ConversionHelper = ()=>{
             getCurr,
             setCurr,
             updateConversions,
-            getCurrLabels
+            getCurrLabels,
+            getCoreUSDValue
         }
     )
 }

@@ -164,9 +164,18 @@ h1,h2{
 
     position: relative;
     width: 100px;
-    height:74px;
+    height:75px;
     left: -100px;
+    top:10px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-around;
 }
+.show-list,.add-to-list{
+    width:40%;
+}
+
 
 
 /* general attributes to add to elements */
