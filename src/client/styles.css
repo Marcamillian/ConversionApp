@@ -163,7 +163,6 @@ h1,h2{
     background-color: #000000D8;
 
     position: absolute;
-    width: 100px;
     height:50px;
     right: 75vw;
     top:10px;
@@ -172,17 +171,22 @@ h1,h2{
     align-items:center;
     justify-content:space-around;
 }
-#spend-list .tab.expanded{
-    width:200px;
-}
 
 .show-list,.add-to-list,.expand-description{
-    height:60%
+    height:60%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+#spend-list .tab.expanded .expand-description{
+    transform: scaleX(-1)
 }
 
-.item-description{
+#spend-list .item-description{
     height:60%;
     width:0px;
+}
+#spend-list .tab.expanded .item-description{
+    width:200px;
 }
 
 /* general attributes to add to elements */
