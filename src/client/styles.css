@@ -184,6 +184,8 @@ h1,h2{
 #spend-list .item-description{
     height:60%;
     width:0px;
+
+    text-align: center;
 }
 #spend-list .tab.expanded .item-description{
     width:200px;
