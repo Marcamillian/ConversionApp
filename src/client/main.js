@@ -31,11 +31,15 @@ window.onload = ()=>{
     // list elements
     const listPopup = document.querySelector("#spend-list")
     const listPopupShowButton = document.querySelector("#spend-list .show-list")
+    const listNamesEl = document.querySelector(".list-names")
+    const listItemsEl = document.querySelector(".list-items")
+    const listTotalEl = document.querySelector(".item-total")
+
+    // list tab elements
     const listPopupTab = document.querySelector("#spend-list .tab");
     const listPopupAddToListButton = document.querySelector("#spend-list .add-to-list")
     const listPopupItemDescription = document.querySelector("#spend-list .item-description")
     const listPopupExpandDescription = document.querySelector(".expand-description")
-
 
 // helper modules
     const displayHelper = function DisplayHelper(){
@@ -97,6 +101,31 @@ window.onload = ()=>{
             return element.classList.toggle("expanded")
         }
 
+        const genListNameEl = (listName = "<name missing>",
+                                {   deleteCallback = ()=>{console.log("delete clicked")},
+                                    clickCallback = ()=>{console.log("listName clicked")}
+                                } = {} )=>{
+
+            let listNameEl = document.createElement('li');
+            let deleteButton = document.createElement('button')
+
+            deleteButton.innerText = "-";
+            deleteButton.addEventListener('click',deleteCallback)
+
+            listNameEl.innerText = listName;
+            listNameEl.addEventListener("click",clickCallback)
+
+            if(listName != "Default List") listNameEl.appendChild(deleteButton)
+
+            return listNameEl;
+        }
+
+        const genListItemEl = ()=>{
+            let listItemEl = document.createElement('li');
+
+            return listItemEl;
+        }
+
         return {
             revealPopup,
             hidePopup,
@@ -104,7 +133,8 @@ window.onload = ()=>{
             updateCurrencyLabel,
             generateCurrSelectButton,
             emptyElement,
-            toggleExpanded
+            toggleExpanded,
+            genListNameEl
         }
     }()
 
@@ -258,7 +288,7 @@ window.onload = ()=>{
         displayHelper.revealPopup(currPopupBottom)
     })
 
-    // == list related events
+    // == list tab related events
     listPopupShowButton.addEventListener('click', ()=>{
         if(listPopup.classList.contains("active")){
             displayHelper.hidePopup(listPopup)
@@ -278,13 +308,44 @@ window.onload = ()=>{
         displayHelper.toggleExpanded(listPopupTab)
     })
 
+    // == list realated events
+    listNamesEl.addEventListener("click", ()=>{
+        displayHelper.toggleExpanded(listNamesEl)
+    })
 
+    const updateListNameDisplay = ()=>{
+        // empty the list name Element
+        displayHelper.emptyElement(listNamesEl);
+
+        const clickCallback = (listName)=>{
+            // update the activeList
+            // udpate the listNameDisplay
+        }
+
+        const deleteCallback = (listName)=>{
+            // delete the items in the list
+            // delete the list from the table
+            // update the listNameDisplay
+        }
+
+        // get the anmes of the lists
+        listHelper.getListNames().then((listNames)=>{
+
+            listNames.forEach((listName)=>{
+                const callbacks = { clickCallBack:()=>{clickCallback(listName)} , deleteCallback:()=>{deleteCallback(listName)} }
+                listNamesEl.appendChild(displayHelper.genListNameEl(listName))
+            })
+        })
+    }
+
+    updateListNameDisplay()
 
 // expose the modules for inspection- dev only
     window.convAppObjs = {
         displayHelper,
         networkHelper,
         conversionHelper,
-        serviceWorkerHelper
+        serviceWorkerHelper,
+        listHelper
     }
 }

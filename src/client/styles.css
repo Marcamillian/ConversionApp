@@ -67,165 +67,198 @@ h1,h2{
 }
 
 
+/* update box styling */
+
+    #update-display{
+        top:-20vh;
+        width:50vw;
+        padding:0.5em;
+
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #update-display.active{
+        top:0em;
+    }
+
+    #update-display p{
+        font-size: 1em;
+        text-align:center;
+        margin:0px;
+    }
+
+    #update-display .option-buttons{
+        display:flex;
+        flex-direction: row;
+        justify-content:space-between;
+        align-items:center;
+
+        padding:0.25em 1em 0.25em 1em;
+    }
+
+    #update-display .option-buttons button{
+        padding:0.5em 1em 0.5em 1em
+    }
 
 
-#update-display{
-    top:-20vh;
-    width:50vw;
-    padding:0.5em;
 
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
+/* currency screen styling */
+    .curr-select{
+        width: 100%;
+        height: 50vh;
+        
+        display:flex;
+        flex-direction: column;
+        justify-content:center;
+        align-items: center;
 
-#update-display.active{
-    top:0em;
-}
-
-#update-display p{
-    font-size: 1em;
-    text-align:center;
-    margin:0px;
-}
-
-#update-display .option-buttons{
-    display:flex;
-    flex-direction: row;
-    justify-content:space-between;
-    align-items:center;
-
-    padding:0.25em 1em 0.25em 1em;
-}
-
-#update-display .option-buttons button{
-    padding:0.5em 1em 0.5em 1em
-}
+        position:absolute;
+    }
+    .curr-select button{
+        margin:0.25em;
+        font-size:2em;
+    }
+    .curr-select button .checkmark{
+        height:1em;
+        width:1em;
+        position:relative;
+        top:0.1em;
+        display:none;
+    }
+    .curr-select button.selected .checkmark{
+        display:inline-block;
+    }
+    .curr-select p{
+        margin:0px;
+        display:inline-block;
+    }
 
 
+    .curr-select.top{
+        top:-52vh
+    }
+    .curr-select.top.active{
+        top:0vh;
+    }
 
+    .curr-select.bottom{
+        top:100vh
+    }
+    .curr-select.bottom.active{
+        top:50vh;
+    }
 
-.curr-select{
-    width: 100%;
-    height: 50vh;
-    
-    display:flex;
-    flex-direction: column;
-    justify-content:center;
-    align-items: center;
+/* spend list - positioning */
 
-    position:absolute;
-}
-.curr-select button{
-    margin:0.25em;
-    font-size:2em;
-}
-.curr-select button .checkmark{
-    height:1em;
-    width:1em;
-    position:relative;
-    top:0.1em;
-    display:none;
-}
-.curr-select button.selected .checkmark{
-    display:inline-block;
-}
-.curr-select p{
-    margin:0px;
-    display:inline-block;
-}
+    #spend-list{
+        height:100%;
+        width:75vw;
+        right: -75vw;
+    }
+    #spend-list.active{
+        right: 0vw;
+    }
 
+/* spend list - tab styling */
+    #spend-list .tab{
+        background-color: #000000D8;
 
-.curr-select.top{
-    top:-52vh
-}
-.curr-select.top.active{
-    top:0vh;
-}
+        position: absolute;
+        height:50px;
+        right: 75vw;
+        top:10px;
 
-.curr-select.bottom{
-    top:100vh
-}
-.curr-select.bottom.active{
-    top:50vh;
-}
+        display:flex;
+        align-items:center;
+        justify-content:space-around;
+    }
 
-#spend-list{
-    height:100%;
-    width:75vw;
-    right: -75vw;
-}
-#spend-list.active{
-    right: 0vw;
-}
-#spend-list .tab{
-    background-color: #000000D8;
+    .show-list,.add-to-list,.expand-description{
+        height:60%;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    #spend-list .tab.expanded .expand-description{
+        transform: scaleX(-1)
+    }
 
-    position: absolute;
-    height:50px;
-    right: 75vw;
-    top:10px;
+    #spend-list .item-description{
+        height:60%;
+        width:0px;
 
-    display:flex;
-    align-items:center;
-    justify-content:space-around;
-}
+        text-align: center;
+    }
+    #spend-list .tab.expanded .item-description{
+        width:200px;
+    }
 
-.show-list,.add-to-list,.expand-description{
-    height:60%;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-#spend-list .tab.expanded .expand-description{
-    transform: scaleX(-1)
-}
+/* spend list - list view styling */
+    #spend-list{
+        display:flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content:start;
+    }
+    #spend-list .list-names{
+        text-align:center;
+        padding-right:30px;
 
-#spend-list .item-description{
-    height:60%;
-    width:0px;
+        overflow:hidden;
+        height:30px;
 
-    text-align: center;
-}
-#spend-list .tab.expanded .item-description{
-    width:200px;
-}
+        list-style: none;
+    }
+    #spend-list .list-names.expanded{
+        height:auto;
+    }
+    #spend-list .list-items{
+        list-style:none;
+        padding-right:30px;
+
+        border-bottom: 3px solid white;
+    }
+    #spend-list .item-total{
+
+    }
 
 /* general attributes to add to elements */
 
-.body-width{
-    width:100%;
-    max-width: 1000px;
-}
+    .body-width{
+        width:100%;
+        max-width: 1000px;
+    }
 
-.shadow{
-    -moz-box-shadow: 3px 3px 15px 6px #00000075;
-    -webkit-box-shadow: 3px 3px 15px 6px #00000075;
-    box-shadow: 3px 3px 15px 6px #00000075;
-}
+    .shadow{
+        -moz-box-shadow: 3px 3px 15px 6px #00000075;
+        -webkit-box-shadow: 3px 3px 15px 6px #00000075;
+        box-shadow: 3px 3px 15px 6px #00000075;
+    }
 
-.dialog-popup{
-    position:absolute;
-    
-    background-color: #000000D8;
-    color:white;
+    .dialog-popup{
+        position:absolute;
+        
+        background-color: #000000D8;
+        color:white;
 
-    -webkit-transition: top 1s, right 1s;
-    transition: top 1s, right 1s;
-}
+        -webkit-transition: top 1s, right 1s;
+        transition: top 1s, right 1s;
+    }
 
-button{
-    border: none;
-    background-color: #FFFFFF00;
-    color:inherit;
-    font-family:inherit;
-}
+    button{
+        border: none;
+        background-color: #FFFFFF00;
+        color:inherit;
+        font-family:inherit;
+    }
 
-button:hover{
-    border: 1px solid white;
-}
+    button:hover{
+        border: 1px solid white;
+    }
 
-button.highlight{
-    background-color: #FF4AED;
-}
+    button.highlight{
+        background-color: #FF4AED;
+    }
 
