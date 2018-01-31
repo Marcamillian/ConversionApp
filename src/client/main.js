@@ -101,19 +101,19 @@ window.onload = ()=>{
             return element.classList.toggle("expanded")
         }
 
-        const genListNameEl = (listName = "<name missing>",
-                                {   deleteCallback = ()=>{console.log("delete clicked")},
-                                    clickCallback = ()=>{console.log("listName clicked")}
+        const genListNameEl = (listName = "<name missing>", callbacks =
+                                {   remove = ()=>{console.log("delete clicked")},
+                                    click = ()=>{console.log("listName clicked")}
                                 } = {} )=>{
 
             let listNameEl = document.createElement('li');
             let deleteButton = document.createElement('button')
 
             deleteButton.innerText = "-";
-            deleteButton.addEventListener('click',deleteCallback)
+            deleteButton.addEventListener('click',callbacks.remove)
 
             listNameEl.innerText = listName;
-            listNameEl.addEventListener("click",clickCallback)
+            listNameEl.addEventListener("click", callbacks.click)
 
             if(listName != "Default List") listNameEl.appendChild(deleteButton)
 
@@ -157,7 +157,7 @@ window.onload = ()=>{
             
             // if there is one waiting - there was a service worker installed on the last refresh and its waiting
             if(reg.waiting){
-                displayHelper.showUpdate()
+                displayHelper.revealPopup(updateUI)
                 return;
             }
 
@@ -318,11 +318,16 @@ window.onload = ()=>{
         displayHelper.emptyElement(listNamesEl);
 
         const clickCallback = (listName)=>{
-            // update the activeList
-            // udpate the listNameDisplay
+            console.log(`doing all the click stuff: ${listName}`)
+            /*
+            listHelper.changeList(listName).then(()=>{
+                console.log(`List changed: ${listName}`)
+                updateListNameDisplay()
+            })*/
         }
 
         const deleteCallback = (listName)=>{
+            console.log(`doing all the delete stuff: ${listName}`)
             // delete the items in the list
             // delete the list from the table
             // update the listNameDisplay
@@ -332,8 +337,8 @@ window.onload = ()=>{
         listHelper.getListNames().then((listNames)=>{
 
             listNames.forEach((listName)=>{
-                const callbacks = { clickCallBack:()=>{clickCallback(listName)} , deleteCallback:()=>{deleteCallback(listName)} }
-                listNamesEl.appendChild(displayHelper.genListNameEl(listName))
+                const callbacks = { click:()=>{clickCallback(listName)} , remove:()=>{deleteCallback(listName)} }
+                listNamesEl.appendChild(displayHelper.genListNameEl(listName, callbacks))
             })
         })
     }
