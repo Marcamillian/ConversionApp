@@ -1,7 +1,8 @@
 const idb = require('idb')
 
 const ListModule = ()=>{
-    let activeList = "Default List"
+    const defaultListName = "Default List";
+    let activeList = defaultListName;
 
     let dbPromise = idb.open('spend-lists',2, (upgradeDb)=>{
         switch(upgradeDb.oldVersion){
@@ -34,7 +35,7 @@ const ListModule = ()=>{
         })
     }
     
-    const changeList = (listName)=>{
+    const changeList = (listName = defaultListName)=>{
         return getList(listName).then((listObject)=>{
             if(listObject != undefined){
                 activeList = listName;
@@ -61,7 +62,7 @@ const ListModule = ()=>{
         })
     }
     
-    const getListItems = (listName = "Default List")=>{
+    const getListItems = (listName = defaultListName)=>{
         return dbPromise.then((db)=>{
             var tx = db.transaction('purchased-items')
             var purchasedItemStore = tx.objectStore('purchased-items')

@@ -121,6 +121,23 @@ window.onload = ()=>{
             return listNameEl;
         }
 
+        const genListAddEl = (addCallback = ()=>{console.log("Add List button clicked")})=>{
+
+            let listAddEl = document.createElement('li');
+            let addButton = document.createElement('button')
+            let nameInput = document.createElement('input')
+
+            addButton.innerText = "+";
+            addButton.addEventListener('click',addCallback)
+
+            nameInput.classList.add("listadd-listname")
+
+            listAddEl.appendChild(nameInput);
+            listAddEl.appendChild(addButton);
+
+            return listAddEl;
+        }
+
         const genListItemEl = ( description = "<description missing>",
                                 price = 0,
                                 {   remove = ()=>{console.log("litItem delete clicked")},
@@ -141,6 +158,8 @@ window.onload = ()=>{
             return listItemEl;
         }
 
+        
+
         return {
             revealPopup,
             hidePopup,
@@ -150,7 +169,8 @@ window.onload = ()=>{
             emptyElement,
             toggleExpanded,
             genListNameEl,
-            genListItemEl
+            genListItemEl,
+            genListAddEl
         }
     }()
 
@@ -313,10 +333,13 @@ window.onload = ()=>{
         } 
     })
 
+    // add to list
     listPopupAddToListButton.addEventListener('click', ()=>{
         listHelper.addRecord({
             description: listPopupItemDescription.value,
             cost:conversionHelper.getCoreUSDValue()
+        }).then(()=>{
+            updateItemListDisplay()
         })
     })
 
@@ -349,19 +372,30 @@ window.onload = ()=>{
             event.stopPropagation()
 
             // delete the items in the list
-            // delete the list from the table
-            // update the listNameDisplay
+            listHelper.deleteList(listName)
+            .then(listHelper.changeList())
+            .then(()=>{
+                updateListNameDisplay()
+            })
         }
 
         // get the anmes of the lists
         listHelper.getListNames().then((listNames)=>{
-
             listNames.forEach((listName)=>{
                 const callbacks = { click:()=>{clickCallback(listName)} , remove:(event)=>{deleteCallback(event,listName)} }
                 listNamesEl.appendChild(displayHelper.genListNameEl(listName, callbacks))
             })
             return true
         }).then(()=>{
+
+            // callback for when you want to create a new list
+            const createNewList = ()=>{
+                const listName = document.querySelector(".listadd-listname").value;
+                listHelper.createList(listName).then(()=>{updateListNameDisplay()})
+            }
+            //add the add list button
+            listNamesEl.appendChild(displayHelper.genListAddEl(createNewList))
+            // update the item list for the active
             updateItemListDisplay()
         }).catch((error)=>{
             console.log("Couldn't update the listNamesElement")
@@ -398,7 +432,6 @@ window.onload = ()=>{
     }
 
     updateListNameDisplay()
-    updateItemListDisplay()
 
 // expose the modules for inspection- dev only
     window.convAppObjs = {
