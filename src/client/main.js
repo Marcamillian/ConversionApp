@@ -32,6 +32,7 @@ window.onload = ()=>{
     const listPopup = document.querySelector("#spend-list")
     const listPopupShowButton = document.querySelector("#spend-list .show-list")
     const listNamesEl = document.querySelector(".list-names")
+    const listNamesExpandEl = document.querySelector(".list-name-display img")
     const listItemsEl = document.querySelector(".list-items")
     const listTotalEl = document.querySelector(".item-total")
 
@@ -120,8 +121,22 @@ window.onload = ()=>{
             return listNameEl;
         }
 
-        const genListItemEl = ()=>{
+        const genListItemEl = ( description = "<description missing>",
+                                price = 0,
+                                {   remove = ()=>{console.log("litItem delete clicked")},
+                                    click = ()=>{console.log("listItem clicked")}
+                                }={} )=>{
+
+
             let listItemEl = document.createElement('li');
+            let deleteButton = document.createElement('button')
+
+            deleteButton.innerText = "-";
+            deleteButton.addEventListener('click', remove)
+
+            listItemEl.innerText = `$${price} : ${description}`;
+            listItemEl.addEventListener("click", click)
+            listItemEl.appendChild(deleteButton)
 
             return listItemEl;
         }
@@ -134,7 +149,8 @@ window.onload = ()=>{
             generateCurrSelectButton,
             emptyElement,
             toggleExpanded,
-            genListNameEl
+            genListNameEl,
+            genListItemEl
         }
     }()
 
@@ -309,7 +325,7 @@ window.onload = ()=>{
     })
 
     // == list realated events
-    listNamesEl.addEventListener("click", ()=>{
+    listNamesExpandEl.addEventListener("click", ()=>{
         displayHelper.toggleExpanded(listNamesEl)
     })
 
@@ -319,15 +335,19 @@ window.onload = ()=>{
 
         const clickCallback = (listName)=>{
             console.log(`doing all the click stuff: ${listName}`)
-            /*
+            
             listHelper.changeList(listName).then(()=>{
                 console.log(`List changed: ${listName}`)
                 updateListNameDisplay()
-            })*/
+            })
         }
 
-        const deleteCallback = (listName)=>{
+        const deleteCallback = (event,listName)=>{
             console.log(`doing all the delete stuff: ${listName}`)
+
+            // cancel the event bubbling
+            event.stopPropagation()
+
             // delete the items in the list
             // delete the list from the table
             // update the listNameDisplay
@@ -337,13 +357,48 @@ window.onload = ()=>{
         listHelper.getListNames().then((listNames)=>{
 
             listNames.forEach((listName)=>{
-                const callbacks = { click:()=>{clickCallback(listName)} , remove:()=>{deleteCallback(listName)} }
+                const callbacks = { click:()=>{clickCallback(listName)} , remove:(event)=>{deleteCallback(event,listName)} }
                 listNamesEl.appendChild(displayHelper.genListNameEl(listName, callbacks))
+            })
+            return true
+        }).then(()=>{
+            updateItemListDisplay()
+        }).catch((error)=>{
+            console.log("Couldn't update the listNamesElement")
+        })
+    }
+
+    const updateItemListDisplay = ()=>{
+        // empty the list items
+        displayHelper.emptyElement(listItemsEl)
+        // listItemsEl
+
+        // define functions for the click and remove
+        const clickCallback = ()=>{
+            console.log("doing the click callback")
+            // don't want anything to happen when the item gets clicked
+        }
+
+        const removeCallback = (event, storeKey)=>{
+            console.log("doing the remove callback")
+            event.stopPropagation()
+            listHelper.deletePurchasedItem(storeKey).then(()=>{
+                updateItemListDisplay()
+            })
+        }
+
+
+        // get the details of the list items
+        listHelper.getListItems(listHelper.getActiveList()).then((listItemDetails)=>{
+            listItemDetails.forEach((listItem)=>{
+                const callbacks = {click: clickCallback, remove:(event)=>{removeCallback(event, listItem.storeKey)} }
+                listItemsEl.appendChild(displayHelper.genListItemEl(listItem.description, listItem.price, callbacks))
             })
         })
     }
 
     updateListNameDisplay()
+    updateItemListDisplay()
 
 // expose the modules for inspection- dev only
     window.convAppObjs = {
@@ -351,6 +406,7 @@ window.onload = ()=>{
         networkHelper,
         conversionHelper,
         serviceWorkerHelper,
-        listHelper
+        listHelper,
+        updateListNameDisplay
     }
 }

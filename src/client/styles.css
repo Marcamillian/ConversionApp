@@ -223,6 +223,14 @@ h1,h2{
     #spend-list .item-total{
 
     }
+    #spend-list .list-name-display{
+        display:flex;
+        flex-direction:row;
+    }
+    #spend-list .list-name-display img{
+        height:30px;
+        margin-top:24px;
+    }
 
 /* general attributes to add to elements */
 
