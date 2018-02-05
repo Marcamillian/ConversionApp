@@ -424,11 +424,19 @@ window.onload = ()=>{
 
         // get the details of the list items
         listHelper.getListItems(listHelper.getActiveList()).then((listItemDetails)=>{
+            
+            let listTotal = 0;
+
             listItemDetails.forEach((listItem)=>{
                 const callbacks = {click: clickCallback, remove:(event)=>{removeCallback(event, listItem.storeKey)} }
-                listItemsEl.appendChild(displayHelper.genListItemEl(listItem.description, listItem.price, callbacks))
+                listItemsEl.appendChild(displayHelper.genListItemEl(listItem.description, listItem.price.toFixed(2), callbacks))
+                listTotal += listItem.price
             })
+
+            listTotalEl.innerText = `$${listTotal.toFixed(2)}`
         })
+
+
     }
 
     updateListNameDisplay()
