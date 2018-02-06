@@ -361,6 +361,7 @@ window.onload = ()=>{
             
             listHelper.changeList(listName).then(()=>{
                 console.log(`List changed: ${listName}`)
+                displayHelper.toggleExpanded(listNamesEl)
                 updateListNameDisplay()
             })
         }
