@@ -381,12 +381,17 @@ window.onload = ()=>{
 
         // get the anmes of the lists
         listHelper.getListNames().then((listNames)=>{
+            const activeList = listHelper.getActiveList();
+
             listNames.forEach((listName)=>{
                 const callbacks = { click:()=>{clickCallback(listName)} , remove:(event)=>{deleteCallback(event,listName)} }
-                listNamesEl.appendChild(displayHelper.genListNameEl(listName, callbacks))
+                const positionInsert = (listName == activeList) ? listNamesEl.firstChild : null;
+
+                listNamesEl.insertBefore(displayHelper.genListNameEl(listName, callbacks), positionInsert)
             })
             return true
-        }).then(()=>{
+
+        }).then(()=>{ // add the element to add a list
 
             // callback for when you want to create a new list
             const createNewList = ()=>{
@@ -395,8 +400,9 @@ window.onload = ()=>{
             }
             //add the add list button
             listNamesEl.appendChild(displayHelper.genListAddEl(createNewList))
-            // update the item list for the active
+            
             updateItemListDisplay()
+
         }).catch((error)=>{
             console.log("Couldn't update the listNamesElement")
         })
