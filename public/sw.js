@@ -1,3 +1,5 @@
+//b5510e5..d808be4
+
 const staticCacheName = "convapp-static-v3"
 const fakeRates = JSON.stringify({'USD': 1, 'EUR': 1, 'GBP':1, 'INR':1})
 
