@@ -1,10 +1,10 @@
 const ConversionModule = require(`./../modules/ConversionHelper.js`)
 const NetworkModule = require('./../modules/NetworkHelper.js')
 const DisplayHelper = require('./../modules/DisplayHelper.js')
+const ListModule = require('./../modules/ListModule.js')
 
 window.onload = ()=>{
-
-
+    let listCurr = "USD";
 // === GET ALL THE RELEVANT ELEMENTS IN THE DOM
 
     // currency conversion boxes
@@ -27,6 +27,21 @@ window.onload = ()=>{
     // currency option buttons
     let currSelectButtonsTop = document.querySelectorAll('.curr-select.top button')
     let currSelectButtonsBottom = document.querySelectorAll('.curr-select.bottom button')
+    // list elements
+    const listPopup = document.querySelector("#spend-list")
+    const listPopupShowButton = document.querySelector("#spend-list .show-list")
+    const listNamesEl = document.querySelector(".list-names")
+    const listNamesExpandEl = document.querySelector(".list-name-display img")
+    const listItemsEl = document.querySelector(".list-items")
+    const listTotalEl = document.querySelector(".item-total")
+    const listCurrencyEl = document.querySelector(".list-currs")
+    const listCurrencyExpandEl = document.querySelector(".curr-display img")
+
+    // list tab elements
+    const listPopupTab = document.querySelector("#spend-list .tab");
+    const listPopupAddToListButton = document.querySelector("#spend-list .add-to-list")
+    const listPopupItemDescription = document.querySelector("#spend-list .item-description")
+    const listPopupExpandDescription = document.querySelector(".expand-description")
 
 // helper modules
     const displayHelper = function DisplayHelper(){
@@ -84,90 +99,98 @@ window.onload = ()=>{
             }
         }
 
+        const toggleExpanded = (element)=>{
+            return element.classList.toggle("expanded")
+        }
+
+        const genListNameEl = (listName = "<name missing>", callbacks =
+                                {   remove = ()=>{console.log("delete clicked")},
+                                    click = ()=>{console.log("listName clicked")}
+                                } = {} )=>{
+
+            let listNameEl = document.createElement('li');
+            let deleteButton = document.createElement('button')
+
+            deleteButton.innerText = "-";
+            deleteButton.addEventListener('click',callbacks.remove)
+
+            listNameEl.innerText = listName;
+            listNameEl.addEventListener("click", callbacks.click)
+
+            if(listName != "Default List") listNameEl.appendChild(deleteButton)
+
+            return listNameEl;
+        }
+
+        const genListAddEl = (addCallback = ()=>{console.log("Add List button clicked")})=>{
+
+            let listAddEl = document.createElement('li');
+            let addButton = document.createElement('button')
+            let nameInput = document.createElement('input')
+
+            addButton.innerText = "+";
+            addButton.addEventListener('click',addCallback)
+
+            nameInput.classList.add("listadd-listname")
+
+            listAddEl.appendChild(nameInput);
+            listAddEl.appendChild(addButton);
+
+            return listAddEl;
+        }
+
+        const genListItemEl = ( description = "<description missing>",
+                                price = 0,
+                                {   remove = ()=>{console.log("litItem delete clicked")},
+                                    click = ()=>{console.log("listItem clicked")}
+                                }={} )=>{
+
+
+            let listItemEl = document.createElement('li');
+            let deleteButton = document.createElement('button')
+
+            deleteButton.innerText = "-";
+            deleteButton.addEventListener('click', remove)
+
+            listItemEl.innerText = `$${price} : ${description}`;
+            listItemEl.addEventListener("click", click)
+            listItemEl.appendChild(deleteButton)
+
+            return listItemEl;
+        }
+
+        const genListCurrEl = (currName = "<curr not defined>",
+                                // callbacks
+                                { click = ()=>{console.log("listCurr clicked")}
+                                } = {})=>{
+            let listCurrEl = document.createElement('li')
+
+            listCurrEl.innerText = currName;
+            listCurrEl.addEventListener("click", click)
+
+            return listCurrEl
+        }
+
         return {
             revealPopup,
             hidePopup,
             showCurrSelect,
             updateCurrencyLabel,
             generateCurrSelectButton,
-            emptyElement
+            emptyElement,
+            toggleExpanded,
+            genListNameEl,
+            genListItemEl,
+            genListAddEl,
+            genListCurrEl
         }
     }()
+
+    const listHelper = ListModule();
 
     const networkHelper = NetworkModule()
 
     const conversionHelper = ConversionModule()
-    
-    /*function ConversionHelper(){
-
-        let coreUSDValue = 0;
-        let curr = ['USD', 'GBP']
-
-        let rates = {
-            USD: 1,
-            GBP: 0.752245
-        }
-
-        const setRates = (newRates)=>{
-            return rates = newRates
-        }
-
-        const convertValue= ({sourceValue=0, sourceCurrency='USD', targetCurrency='GBP'}={})=>{
-            const USD = sourceValue / rates[sourceCurrency]   // convert to base currency (USD)
-            return USD*rates[targetCurrency]   // return value 
-        }
-
-        // functions to update what currency is being used
-
-        const getCurr = (currIndex)=>{
-            return curr[currIndex-1]
-        }
-
-        const setCurr = (currIndex, newCurr)=>{
-            curr[currIndex-1] = newCurr
-        }
-
-        const updateConversions = (convertValue=coreUSDValue, sourceCurrency='USD')=>{
-            
-            // normalise to USD
-            const incomingUSDValue = conversionHelper.convertValue({
-                sourceValue: convertValue,
-                sourceCurrency: sourceCurrency,
-                targetCurrency: 'USD'
-            })
-    
-            coreUSDValue = incomingUSDValue; // store this value for the future
-    
-            // update the value in top box
-            const conversion1 = conversionHelper.convertValue({
-                sourceValue: incomingUSDValue,
-                sourceCurrency:'USD',
-                targetCurrency: curr[0]
-            }).toFixed(2)
-    
-            // update value in bottom box
-            const conversion2 = conversionHelper.convertValue({
-                sourceValue: incomingUSDValue,
-                sourceCurrency: 'USD',
-                targetCurrency: curr[1]
-            }).toFixed(2)
-            return { topValue: conversion1, bottomValue: conversion2}
-        }
-
-        const getCurrLabels = ()=>{
-            return Object.keys(rates)
-        }
-
-        return {
-            setRates,
-            convertValue,
-            getCurr,
-            setCurr,
-            updateConversions,
-            getCurrLabels
-        }
-
-    }()*/
 
     const serviceWorkerHelper = function ServiceWorkerHelper(workerLocation, updateUI, updateTriggerEl){
         if (!navigator.serviceWorker) throw new Error("service worker not supported")
@@ -182,7 +205,7 @@ window.onload = ()=>{
             
             // if there is one waiting - there was a service worker installed on the last refresh and its waiting
             if(reg.waiting){
-                displayHelper.showUpdate()
+                displayHelper.revealPopup(updateUI)
                 return;
             }
 
@@ -223,7 +246,7 @@ window.onload = ()=>{
             })
         }
 
-    }('/sw.js',updateDialog, updateInstallButton)
+    }('sw.js',updateDialog, updateInstallButton)
 
     
 // IMPLEMENTATION SPECIFIC COMMANDS
@@ -235,7 +258,7 @@ window.onload = ()=>{
         const currLabel = (isTopCurr) ? currLabelTop: currLabelBottom
         const currPopup = (isTopCurr) ? currPopupTop: currPopupBottom
         const currSelectButtons = (isTopCurr) ? currSelectButtonsTop: currSelectButtonsBottom;
-        const currButton = (event.target.tagName != 'button') ? event.target.parentNode : event.target; // if the click on a child - set parent OR - set the parent as the button
+        const currButton = (event.target.tagName != 'BUTTON') ? event.target.parentNode : event.target; // if the click on a child - set parent OR - set the parent as the button
         const currButtonCurrName = currButton.querySelector('p').innerText
 
 
@@ -254,6 +277,185 @@ window.onload = ()=>{
         displayHelper.hidePopup(currPopup)// hide the currency select
         return
     }
+
+    const updateListNameDisplay = ()=>{
+        // empty the list name Element
+        displayHelper.emptyElement(listNamesEl);
+
+        const clickCallback = (listName)=>{
+            console.log(`doing all the click stuff: ${listName}`)
+            
+            listHelper.changeList(listName).then(()=>{
+                console.log(`List changed: ${listName}`)
+                displayHelper.toggleExpanded(listNamesEl)
+                updateListNameDisplay()
+            })
+        }
+
+        const deleteCallback = (event,listName)=>{
+            console.log(`doing all the delete stuff: ${listName}`)
+
+            // cancel the event bubbling
+            event.stopPropagation()
+
+            // delete the items in the list
+            listHelper.deleteList(listName)
+            .then(listHelper.changeList())
+            .then(()=>{
+                updateListNameDisplay()
+            })
+        }
+
+        // get the anmes of the lists
+        listHelper.getListNames().then((listNames)=>{
+            const activeList = listHelper.getActiveList();
+
+            listNames.forEach((listName)=>{
+                const callbacks = { click:()=>{clickCallback(listName)} , remove:(event)=>{deleteCallback(event,listName)} }
+                const positionInsert = (listName == activeList) ? listNamesEl.firstChild : null;
+
+                listNamesEl.insertBefore(displayHelper.genListNameEl(listName, callbacks), positionInsert)
+            })
+            return true
+
+        }).then(()=>{ // add the element to add a list
+
+            // callback for when you want to create a new list
+            const createNewList = ()=>{
+                const listName = document.querySelector(".listadd-listname").value;
+                listHelper.createList(listName).then(()=>{updateListNameDisplay()})
+            }
+            //add the add list button
+            listNamesEl.appendChild(displayHelper.genListAddEl(createNewList))
+            
+            updateItemListDisplay()
+
+        }).catch((error)=>{
+            console.log("Couldn't update the listNamesElement")
+        })
+    }
+
+    const updateItemListDisplay = ()=>{
+        // empty the list items
+        displayHelper.emptyElement(listItemsEl)
+        // listItemsEl
+
+        // define functions for the click and remove
+        const clickCallback = ()=>{
+            console.log("doing the click callback")
+            // don't want anything to happen when the item gets clicked
+        }
+
+        const removeCallback = (event, storeKey)=>{
+            console.log("doing the remove callback")
+            event.stopPropagation()
+            listHelper.deletePurchasedItem(storeKey).then(()=>{
+                updateItemListDisplay()
+            })
+        }
+
+
+        // get the details of the list items
+        listHelper.getListItems(listHelper.getActiveList()).then((listItemDetails)=>{
+            
+            let listTotal = 0;
+
+            listItemDetails.forEach((listItem)=>{
+                const callbacks = {click: clickCallback, remove:(event)=>{removeCallback(event, listItem.storeKey)} }
+                listItemsEl.appendChild(displayHelper.genListItemEl(listItem.description, listItem.price.toFixed(2), callbacks))
+                listTotal += listItem.price
+            })
+
+            listTotalEl.innerText = `$${listTotal.toFixed(2)}`
+        })
+
+
+    }
+
+    const setListCurr = (currency)=>{
+        if(conversionHelper.getCurrLabels().includes(currency)){
+            return listCurr = currency;
+        }else{
+            throw new Error(`${currency} not a valid currency`)
+        }
+    }
+
+    const updateListCurrDisplay = ()=>{
+        // empty the currency element
+        displayHelper.emptyElement(listCurrencyEl)
+        
+        // get the currencies available
+        const currencies = conversionHelper.getCurrLabels()
+
+        currencies.forEach((currName)=>{
+            // TODO - write the generate function & write the callback function
+
+            const clickCallback = (currencyName)=>{
+                setListCurr(currencyName);
+                updateListCurrDisplay();
+                displayHelper.toggleExpanded(listCurrencyEl)
+                updateItemListDisplay();
+            }
+
+            let currNamePosition = (currName == listCurr) ? listCurrencyEl.firstChild : null;
+
+            listCurrencyEl.insertBefore(displayHelper.genListCurrEl(currName, {click:()=>{clickCallback(currName)}}), currNamePosition);
+        })
+    }
+
+    // == currency relevant events
+
+    // event listeners -- when the input is modified 
+    curr1Input.addEventListener('keyup',(event)=>{        
+        const convertValues = conversionHelper.updateConversions(event.target.value, conversionHelper.getCurr(1))
+        curr2Input.value = convertValues.bottomValue;
+    })
+
+    curr2Input.addEventListener('keyup',(event)=>{
+        const convertValues = conversionHelper.updateConversions(event.target.value, conversionHelper.getCurr(2))
+        curr1Input.value = convertValues.topValue;
+    })
+
+    topCurrRevealButton.addEventListener('click', ()=>{
+        displayHelper.revealPopup(currPopupTop);
+    })
+    bottomCurrRevealButton.addEventListener('click', ()=>{
+        displayHelper.revealPopup(currPopupBottom)
+    })
+
+    // == list tab related events
+    listPopupShowButton.addEventListener('click', ()=>{
+        if(listPopup.classList.contains("active")){
+            displayHelper.hidePopup(listPopup)
+        }else{
+            displayHelper.revealPopup(listPopup)
+        } 
+    })
+
+    // add to list
+    listPopupAddToListButton.addEventListener('click', ()=>{
+        listHelper.addRecord({
+            description: listPopupItemDescription.value,
+            cost:conversionHelper.getCoreUSDValue()
+        }).then(()=>{
+            updateItemListDisplay()
+        })
+    })
+
+    listPopupExpandDescription.addEventListener('click', ()=>{
+        displayHelper.toggleExpanded(listPopupTab)
+    })
+
+    // == list realated events
+    listNamesExpandEl.addEventListener("click", ()=>{
+        displayHelper.toggleExpanded(listNamesEl)
+    })
+
+    listCurrencyExpandEl.addEventListener("click", ()=>{
+        displayHelper.toggleExpanded(listCurrencyEl)
+    })
+
+    // GETTING STARTED - after we have grabbed rates
 
     // grab the rates
     networkHelper.getRates().then((rates)=>{
@@ -283,43 +485,22 @@ window.onload = ()=>{
         currSelectButtonsTop = document.querySelectorAll('.curr-select.top button')
         currSelectButtonsBottom = document.querySelectorAll('.curr-select.bottom button')
 
+        updateListNameDisplay()
+        updateListCurrDisplay()
     })
 
-    // == Update functionality
     // dismiss the update 
     updateDismissButton.addEventListener('click',()=>{
         displayHelper.hidePopup(updateDismissButton)
     })
-
-
-
-    // == currency relevant events
-
-    // event listeners -- when the input is modified 
-    curr1Input.addEventListener('keyup',(e)=>{        
-        const convertValues = conversionHelper.updateConversions(event.target.value, conversionHelper.getCurr(1))
-        curr2Input.value = convertValues.bottomValue;
-    })
-
-    curr2Input.addEventListener('keyup',(e)=>{
-        const convertValues = conversionHelper.updateConversions(event.target.value, conversionHelper.getCurr(2))
-        curr1Input.value = convertValues.topValue;
-    })
-
-    topCurrRevealButton.addEventListener('click', ()=>{
-        displayHelper.revealPopup(currPopupTop);
-    })
-    bottomCurrRevealButton.addEventListener('click', ()=>{
-        displayHelper.revealPopup(currPopupBottom)
-    })
-
-
 
 // expose the modules for inspection- dev only
     window.convAppObjs = {
         displayHelper,
         networkHelper,
         conversionHelper,
-        serviceWorkerHelper
+        serviceWorkerHelper,
+        listHelper,
+        setListCurr
     }
 }
