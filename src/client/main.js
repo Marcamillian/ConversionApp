@@ -152,7 +152,7 @@ window.onload = ()=>{
             deleteButton.innerText = "-";
             deleteButton.addEventListener('click', remove)
 
-            listItemEl.innerText = `$${price} : ${description}`;
+            listItemEl.innerText = `${price} : ${description}`;
             listItemEl.addEventListener("click", click)
             listItemEl.appendChild(deleteButton)
 
@@ -362,11 +362,12 @@ window.onload = ()=>{
 
             listItemDetails.forEach((listItem)=>{
                 const callbacks = {click: clickCallback, remove:(event)=>{removeCallback(event, listItem.storeKey)} }
-                listItemsEl.appendChild(displayHelper.genListItemEl(listItem.description, listItem.price.toFixed(2), callbacks))
-                listTotal += listItem.price
+                const convertedPrice = conversionHelper.convertValue({sourceValue: listItem.price, targetCurrency:listCurr})
+                listItemsEl.appendChild(displayHelper.genListItemEl(listItem.description, convertedPrice.toFixed(2), callbacks))
+                listTotal += convertedPrice
             })
 
-            listTotalEl.innerText = `$${listTotal.toFixed(2)}`
+            listTotalEl.innerText = `${listTotal.toFixed(2)}`
         })
 
 
