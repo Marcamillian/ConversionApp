@@ -202,7 +202,15 @@ h1,h2{
         align-items: center;
         justify-content:start;
     }
-    #spend-list .list-names{
+    #spend-list .list-dropdown{
+        display:flex;
+        flex-direction:row;
+    }
+    #spend-list .list-dropdown img{
+        height:30px;
+        margin-top:24px;
+    }
+    #spend-list .list-dropdown ul{
         text-align:center;
         padding-right:30px;
 
@@ -211,26 +219,22 @@ h1,h2{
 
         list-style: none;
     }
-    #spend-list .list-names.expanded{
+    #spend-list .list-dropdown ul li{
+        list-style: none;
+        padding-right:30px;
+    }
+    #spend-list .list-dropdown ul.expanded{
         height:auto;
     }
+    
     #spend-list .list-items{
-        list-style:none;
-        padding-right:30px;
-
         border-bottom: 3px solid white;
     }
     #spend-list .item-total{
 
     }
-    #spend-list .list-name-display{
-        display:flex;
-        flex-direction:row;
-    }
-    #spend-list .list-name-display img{
-        height:30px;
-        margin-top:24px;
-    }
+    
+    
 
 /* general attributes to add to elements */
 

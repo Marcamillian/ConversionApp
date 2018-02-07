@@ -4,8 +4,7 @@ const DisplayHelper = require('./../modules/DisplayHelper.js')
 const ListModule = require('./../modules/ListModule.js')
 
 window.onload = ()=>{
-
-
+    let listCurr = "USD";
 // === GET ALL THE RELEVANT ELEMENTS IN THE DOM
 
     // currency conversion boxes
@@ -35,6 +34,8 @@ window.onload = ()=>{
     const listNamesExpandEl = document.querySelector(".list-name-display img")
     const listItemsEl = document.querySelector(".list-items")
     const listTotalEl = document.querySelector(".item-total")
+    const listCurrencyEl = document.querySelector(".list-currs")
+    const listCurrencyExpandEl = document.querySelector(".curr-display img")
 
     // list tab elements
     const listPopupTab = document.querySelector("#spend-list .tab");
@@ -158,7 +159,17 @@ window.onload = ()=>{
             return listItemEl;
         }
 
-        
+        const genListCurrEl = (currName = "<curr not defined>",
+                                // callbacks
+                                { click = ()=>{console.log("listCurr clicked")}
+                                } = {})=>{
+            let listCurrEl = document.createElement('li')
+
+            listCurrEl.innerText = currName;
+            listCurrEl.addEventListener("click", click)
+
+            return listCurrEl
+        }
 
         return {
             revealPopup,
@@ -170,7 +181,8 @@ window.onload = ()=>{
             toggleExpanded,
             genListNameEl,
             genListItemEl,
-            genListAddEl
+            genListAddEl,
+            genListCurrEl
         }
     }()
 
@@ -266,92 +278,6 @@ window.onload = ()=>{
         return
     }
 
-    // grab the rates
-    networkHelper.getRates().then((rates)=>{
-        let currLabels;
-
-
-        conversionHelper.setRates(rates)
-        
-        currLabels = conversionHelper.getCurrLabels()
-
-        // empty the popups of their buttons
-        displayHelper.emptyElement(currPopupTop)
-        displayHelper.emptyElement(currPopupBottom)
-
-        currLabels.forEach((currLabel)=>{
-            const topButton = displayHelper.generateCurrSelectButton(currLabel, currLabel == conversionHelper.getCurr(1))
-            const bottomButton = displayHelper.generateCurrSelectButton(currLabel, currLabel == conversionHelper.getCurr(2))
-
-            topButton.addEventListener('click', (event)=>{ currSelectCallback(event, true)})
-            bottomButton.addEventListener('click', (event)=>{ currSelectCallback(event, false)})
-
-            currPopupTop.appendChild(topButton)
-            currPopupBottom.appendChild(bottomButton)
-        })
-
-        // update the currSelectButtons - so they can be cleared
-        currSelectButtonsTop = document.querySelectorAll('.curr-select.top button')
-        currSelectButtonsBottom = document.querySelectorAll('.curr-select.bottom button')
-
-    })
-
-    // == Update functionality
-    // dismiss the update 
-    updateDismissButton.addEventListener('click',()=>{
-        displayHelper.hidePopup(updateDismissButton)
-    })
-
-
-
-    // == currency relevant events
-
-    // event listeners -- when the input is modified 
-    curr1Input.addEventListener('keyup',(event)=>{        
-        const convertValues = conversionHelper.updateConversions(event.target.value, conversionHelper.getCurr(1))
-        curr2Input.value = convertValues.bottomValue;
-    })
-
-    curr2Input.addEventListener('keyup',(event)=>{
-        const convertValues = conversionHelper.updateConversions(event.target.value, conversionHelper.getCurr(2))
-        curr1Input.value = convertValues.topValue;
-    })
-
-    topCurrRevealButton.addEventListener('click', ()=>{
-        displayHelper.revealPopup(currPopupTop);
-    })
-    bottomCurrRevealButton.addEventListener('click', ()=>{
-        displayHelper.revealPopup(currPopupBottom)
-    })
-
-    // == list tab related events
-    listPopupShowButton.addEventListener('click', ()=>{
-        if(listPopup.classList.contains("active")){
-            displayHelper.hidePopup(listPopup)
-        }else{
-            displayHelper.revealPopup(listPopup)
-        } 
-    })
-
-    // add to list
-    listPopupAddToListButton.addEventListener('click', ()=>{
-        listHelper.addRecord({
-            description: listPopupItemDescription.value,
-            cost:conversionHelper.getCoreUSDValue()
-        }).then(()=>{
-            updateItemListDisplay()
-        })
-    })
-
-    listPopupExpandDescription.addEventListener('click', ()=>{
-        displayHelper.toggleExpanded(listPopupTab)
-    })
-
-    // == list realated events
-    listNamesExpandEl.addEventListener("click", ()=>{
-        displayHelper.toggleExpanded(listNamesEl)
-    })
-
     const updateListNameDisplay = ()=>{
         // empty the list name Element
         displayHelper.emptyElement(listNamesEl);
@@ -446,7 +372,127 @@ window.onload = ()=>{
 
     }
 
-    updateListNameDisplay()
+    const setListCurr = (currency)=>{
+        if(conversionHelper.getCurrLabels().includes(currency)){
+            return listCurr = currency;
+        }else{
+            throw new Error(`${currency} not a valid currency`)
+        }
+    }
+
+    const updateListCurrDisplay = ()=>{
+        // empty the currency element
+        displayHelper.emptyElement(listCurrencyEl)
+        
+        // get the currencies available
+        const currencies = conversionHelper.getCurrLabels()
+
+        currencies.forEach((currName)=>{
+            // TODO - write the generate function & write the callback function
+
+            const clickCallback = (currencyName)=>{
+                setListCurr(currencyName);
+                updateListCurrDisplay();
+                displayHelper.toggleExpanded(listCurrencyEl)
+                updateItemListDisplay();
+            }
+
+            let currNamePosition = (currName == listCurr) ? listCurrencyEl.firstChild : null;
+
+            listCurrencyEl.insertBefore(displayHelper.genListCurrEl(currName, {click:()=>{clickCallback(currName)}}), currNamePosition);
+        })
+    }
+
+    // == currency relevant events
+
+    // event listeners -- when the input is modified 
+    curr1Input.addEventListener('keyup',(event)=>{        
+        const convertValues = conversionHelper.updateConversions(event.target.value, conversionHelper.getCurr(1))
+        curr2Input.value = convertValues.bottomValue;
+    })
+
+    curr2Input.addEventListener('keyup',(event)=>{
+        const convertValues = conversionHelper.updateConversions(event.target.value, conversionHelper.getCurr(2))
+        curr1Input.value = convertValues.topValue;
+    })
+
+    topCurrRevealButton.addEventListener('click', ()=>{
+        displayHelper.revealPopup(currPopupTop);
+    })
+    bottomCurrRevealButton.addEventListener('click', ()=>{
+        displayHelper.revealPopup(currPopupBottom)
+    })
+
+    // == list tab related events
+    listPopupShowButton.addEventListener('click', ()=>{
+        if(listPopup.classList.contains("active")){
+            displayHelper.hidePopup(listPopup)
+        }else{
+            displayHelper.revealPopup(listPopup)
+        } 
+    })
+
+    // add to list
+    listPopupAddToListButton.addEventListener('click', ()=>{
+        listHelper.addRecord({
+            description: listPopupItemDescription.value,
+            cost:conversionHelper.getCoreUSDValue()
+        }).then(()=>{
+            updateItemListDisplay()
+        })
+    })
+
+    listPopupExpandDescription.addEventListener('click', ()=>{
+        displayHelper.toggleExpanded(listPopupTab)
+    })
+
+    // == list realated events
+    listNamesExpandEl.addEventListener("click", ()=>{
+        displayHelper.toggleExpanded(listNamesEl)
+    })
+
+    listCurrencyExpandEl.addEventListener("click", ()=>{
+        displayHelper.toggleExpanded(listCurrencyEl)
+    })
+
+    // GETTING STARTED - after we have grabbed rates
+
+    // grab the rates
+    networkHelper.getRates().then((rates)=>{
+        let currLabels;
+
+
+        conversionHelper.setRates(rates)
+        
+        currLabels = conversionHelper.getCurrLabels()
+
+        // empty the popups of their buttons
+        displayHelper.emptyElement(currPopupTop)
+        displayHelper.emptyElement(currPopupBottom)
+
+        currLabels.forEach((currLabel)=>{
+            const topButton = displayHelper.generateCurrSelectButton(currLabel, currLabel == conversionHelper.getCurr(1))
+            const bottomButton = displayHelper.generateCurrSelectButton(currLabel, currLabel == conversionHelper.getCurr(2))
+
+            topButton.addEventListener('click', (event)=>{ currSelectCallback(event, true)})
+            bottomButton.addEventListener('click', (event)=>{ currSelectCallback(event, false)})
+
+            currPopupTop.appendChild(topButton)
+            currPopupBottom.appendChild(bottomButton)
+        })
+
+        // update the currSelectButtons - so they can be cleared
+        currSelectButtonsTop = document.querySelectorAll('.curr-select.top button')
+        currSelectButtonsBottom = document.querySelectorAll('.curr-select.bottom button')
+
+        updateListNameDisplay()
+        updateListCurrDisplay()
+    })
+
+    // dismiss the update 
+    updateDismissButton.addEventListener('click',()=>{
+        displayHelper.hidePopup(updateDismissButton)
+    })
 
 // expose the modules for inspection- dev only
     window.convAppObjs = {
@@ -455,6 +501,6 @@ window.onload = ()=>{
         conversionHelper,
         serviceWorkerHelper,
         listHelper,
-        updateListNameDisplay
+        setListCurr
     }
 }
