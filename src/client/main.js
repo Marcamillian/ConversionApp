@@ -388,18 +388,15 @@ window.onload = ()=>{
         // get the currencies available
         const currencies = conversionHelper.getCurrLabels()
 
+        const clickCallback = (currencyName)=>{
+            setListCurr(currencyName);
+            updateListCurrDisplay();
+            displayHelper.toggleExpanded(listCurrencyEl)
+            updateItemListDisplay();
+        }
+
         currencies.forEach((currName)=>{
-            // TODO - write the generate function & write the callback function
-
-            const clickCallback = (currencyName)=>{
-                setListCurr(currencyName);
-                updateListCurrDisplay();
-                displayHelper.toggleExpanded(listCurrencyEl)
-                updateItemListDisplay();
-            }
-
             let currNamePosition = (currName == listCurr) ? listCurrencyEl.firstChild : null;
-
             listCurrencyEl.insertBefore(displayHelper.genListCurrEl(currName, {click:()=>{clickCallback(currName)}}), currNamePosition);
         })
     }
