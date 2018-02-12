@@ -42,6 +42,9 @@ window.onload = ()=>{
     const listPopupAddToListButton = document.querySelector("#spend-list .add-to-list")
     const listPopupItemDescription = document.querySelector("#spend-list .item-description")
     const listPopupExpandDescription = document.querySelector(".expand-description")
+    const listNameDisplayTab = document.querySelector(".tab-list-name")
+    const listTotalDisplayTab = document.querySelector(".tab-list-total")
+
 
 // helper modules
     const displayHelper = function DisplayHelper(){
@@ -368,6 +371,7 @@ window.onload = ()=>{
             })
 
             listTotalEl.innerText = `${listTotal.toFixed(2)}`
+            updateTabDisplay(listHelper.getActiveList(), listTotal.toFixed(2),listCurr)
         })
 
 
@@ -399,6 +403,11 @@ window.onload = ()=>{
             let currNamePosition = (currName == listCurr) ? listCurrencyEl.firstChild : null;
             listCurrencyEl.insertBefore(displayHelper.genListCurrEl(currName, {click:()=>{clickCallback(currName)}}), currNamePosition);
         })
+    }
+
+    const updateTabDisplay = (listName = "<Missing List Name", listTotal=NaN, currency="<No currency>")=>{
+        listNameDisplayTab.innerText = listName;
+        listTotalDisplayTab.innerText = `${listTotal} ${currency}`
     }
 
     // == currency relevant events

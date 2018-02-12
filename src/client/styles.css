@@ -167,10 +167,22 @@ h1,h2{
         background-color: #000000D8;
 
         position: absolute;
-        height:50px;
         right: 75vw;
         top:10px;
 
+        display:flex;
+        flex-direction: column;
+        align-items:center;
+        justify-content:space-around;
+    }
+
+    #spend-list .tab p{
+        margin:0px;
+        font-size:0.75em;
+    }
+
+    #spend-list .tab .tools{
+        height:50px;
         display:flex;
         align-items:center;
         justify-content:space-around;
