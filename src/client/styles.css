@@ -190,9 +190,15 @@ h1,h2{
 
     .show-list,.add-to-list,.expand-description{
         height:60%;
-        padding-left: 10px;
-        padding-right: 10px;
+        padding-left: 30px;
+        padding-right: 30px;
+        min-height:50px;
+        min-width:50px;
     }
+    img.expand-description{
+        padding-right:0px;
+    }
+
     #spend-list .tab.expanded .expand-description{
         transform: scaleX(-1)
     }
@@ -297,4 +303,6 @@ h1,h2{
     button.highlight{
         background-color: #FF4AED;
     }
+
+    
 
