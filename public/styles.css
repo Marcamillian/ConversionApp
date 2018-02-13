@@ -108,7 +108,7 @@ h1,h2{
 /* currency screen styling */
     .curr-select{
         width: 100%;
-        height: 50vh;
+        height: 0vh;
         
         display:flex;
         flex-direction: column;
@@ -116,6 +116,7 @@ h1,h2{
         align-items: center;
 
         position:absolute;
+        overflow:hidden;
     }
     .curr-select button{
         margin:0.25em;
@@ -136,30 +137,29 @@ h1,h2{
         display:inline-block;
     }
 
-
     .curr-select.top{
-        top:-52vh
+        top:0vh;
     }
     .curr-select.top.active{
-        top:0vh;
+        height:50vh
     }
 
     .curr-select.bottom{
-        top:100vh
+        bottom:0vh;
     }
     .curr-select.bottom.active{
-        top:50vh;
+        height:50vh;
     }
 
 /* spend list - positioning */
 
     #spend-list{
         height:100%;
-        width:75vw;
-        right: -75vw;
+        width:0vw;
+        right: 0px;
     }
     #spend-list.active{
-        right: 0vw;
+        width:75vw;
     }
 
 /* spend list - tab styling */
@@ -167,10 +167,22 @@ h1,h2{
         background-color: #000000D8;
 
         position: absolute;
-        height:50px;
-        right: 75vw;
+        right: 100%;
         top:10px;
 
+        display:flex;
+        flex-direction: column;
+        align-items:center;
+        justify-content:space-around;
+    }
+
+    #spend-list .tab p{
+        margin:0px;
+        font-size:0.75em;
+    }
+
+    #spend-list .tab .tools{
+        height:50px;
         display:flex;
         align-items:center;
         justify-content:space-around;
@@ -178,9 +190,15 @@ h1,h2{
 
     .show-list,.add-to-list,.expand-description{
         height:60%;
-        padding-left: 10px;
-        padding-right: 10px;
+        padding-left: 30px;
+        padding-right: 30px;
+        min-height:50px;
+        min-width:50px;
     }
+    img.expand-description{
+        padding-right:0px;
+    }
+
     #spend-list .tab.expanded .expand-description{
         transform: scaleX(-1)
     }
@@ -196,12 +214,24 @@ h1,h2{
     }
 
 /* spend list - list view styling */
-    #spend-list{
+
+    #spend-list .list-details{
         display:flex;
         flex-direction: column;
         align-items: center;
         justify-content:start;
+
+        overflow:hidden;
+        width:100%;
     }
+
+    #spend-list .list-name-display,
+    #spend-list .curr-display,
+    #spend-list .list-items,
+    #spend-list .item-total{
+        overflow:hidden;
+    }
+
     #spend-list .list-dropdown{
         display:flex;
         flex-direction:row;
@@ -215,7 +245,7 @@ h1,h2{
         padding-right:30px;
 
         overflow:hidden;
-        height:30px;
+        height:1em;
 
         list-style: none;
     }
@@ -255,8 +285,8 @@ h1,h2{
         background-color: #000000D8;
         color:white;
 
-        -webkit-transition: top 1s, right 1s;
-        transition: top 1s, right 1s;
+        -webkit-transition: top 1s, right 1s, height 1s, width 1s;
+        transition: top 1s, right 1s height 1s, width 1s;
     }
 
     button{
@@ -273,4 +303,6 @@ h1,h2{
     button.highlight{
         background-color: #FF4AED;
     }
+
+    
 
